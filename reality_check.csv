@@ -1,0 +1,11 @@
+text,expected,kind
+"আপনার বিকাশ অ্যাকাউন্ট সাময়িকভাবে বন্ধ করা হয়েছে। এখনই ভেরিফাই করুন: bkash-verify-now.xyz/login",suspicious,bn_script
+"Apnar bKash account bondho hoye jabe. Ekhoni verify korun: bkash-verify-now.xyz/login",suspicious,banglish
+"আপনি ১০ লাখ টাকার লটারি জিতেছেন! পুরস্কার পেতে ০১৭০০০০০০০০০ নম্বরে কল করুন এবং ৫০০ টাকা ফি পাঠান।",suspicious,bn_script
+"Congratulations! Apni 5 lakh taka jitechen. Prize pete 01700000000 e call korun.",suspicious,banglish
+"আপনার বাবা হাসপাতালে, এখনই ৫০০০ টাকা পাঠান এই নম্বরে",suspicious,bn_script
+"Your parcel could not be delivered. Pay 50 BDT fee at delivery-fix-bd.xyz",suspicious,en
+"আজ রাতে কি দেখা হবে? আমি ৮টায় পৌঁছাব।",legit,bn_script
+"Kal class ache? Sir ki bolechen?",legit,banglish
+"Are you coming to the meeting at 3pm?",legit,en
+"ঈদ অফার! ৩০ জিবি ইন্টারনেট মাত্র ৩৯৯ টাকায়, অ্যাপে অফারটি নিন।",promo,bn_script

@@ -1,0 +1,31 @@
+text,expected,kind
+"Your bank account has been suspended. Verify your identity within 24 hours: secure-bankcheck.top/login",suspicious,en
+"Congratulations! You have been selected to receive a $500 gift card. Claim here: giftclaim-now.xyz",suspicious,en
+"Final notice: unpaid toll fee of $4.20. Pay now to avoid a penalty: tollpay-online.top/pay",suspicious,en
+"We are hiring remote workers. Earn $300 per day, no experience needed. Message us on Telegram to start.",suspicious,en
+"Your package is held at our depot. Reschedule delivery and pay the 2.99 fee: parcel-redelivery.xyz",suspicious,en
+"Hi, this is your son. I lost my phone. Please send 200 to this new number urgently.",suspicious,en
+"Your appointment is confirmed for Tuesday at 3:30 PM. Reply C to cancel.",legit,en
+"Your verification code is 482913. Do not share it with anyone.",legit,en
+"Hey, running 10 minutes late, start without me.",legit,en
+"Your order #1038 has shipped and will arrive on Friday.",legit,en
+"Happy birthday! Dinner at 7 on Saturday?",legit,en
+"Meeting moved to 2 PM in room 4B. See you there.",legit,en
+"Dear customer, apnar bKash PIN ta expire hoye geche. Notun PIN set korte ei link e jan: bkash-pin-reset.top",suspicious,banglish
+"Congrats! Apni lucky draw te 5 lakh taka jitse. Taka nite 01700000002 number e WhatsApp korun, 2000 tk processing fee lagbe.",suspicious,banglish
+"Ghore bose din e 1500 taka income korte chaile amader Telegram group e join korun. No investment.",suspicious,banglish
+"apnar chele accident korse, hospital e. Jaldi 5000 taka bkash korun 01700000003 e.",suspicious,banglish
+"Apnar parcel ta ashbe. Delivery charge 80 tk pay korun na hole return hoye jabe: parcel-bd-pay.xyz",suspicious,banglish
+"Sorkari vata paite apnar NID number ar bkash number pathan. Last date aj.",suspicious,banglish
+"bhai kalke class e jabi? sir notes dibe bolse",legit,banglish
+"Ami 6 tay pouchai jabo, tui ready thakis",legit,banglish
+"Amma bolse ajke bazar theke alu ar dim ante",legit,banglish
+"Apnar bKash account e 500 tk cash in hoyeche. Balance 1250 tk. TrxID 8H4K2L9.",legit,banglish
+"Meeting ta kal 11 tar jaygay 12 tay hobe, sobai ke janiye dao",legit,banglish
+"Eid offer! Sob jama kapore 30% discount, sudhu ei soptahe. Amader shop e ashun.",promo,banglish
+"আপনার নগদ অ্যাকাউন্ট বন্ধ হয়ে যাবে। এখনই KYC আপডেট করুন: nagad-kyc-update.top",suspicious,bn_script
+"ঘরে বসে প্রতিদিন ২০০০ টাকা আয় করুন। বিস্তারিত জানতে হোয়াটসঅ্যাপে মেসেজ দিন ০১৭০০০০০০০১",suspicious,bn_script
+"আপনার মোবাইল নম্বরে ৫ লক্ষ টাকার লটারি উঠেছে। টাকা পেতে প্রসেসিং ফি ৩০০০ টাকা বিকাশ করুন।",suspicious,bn_script
+"আপনার বিকাশ অ্যাকাউন্টে ৫০০ টাকা ক্যাশ ইন সফল হয়েছে। বর্তমান ব্যালেন্স ১২৫০ টাকা। TrxID 8H4K2L9.",legit,bn_script
+"ভাই, আজ সন্ধ্যায় ক্রিকেট খেলতে আসবি? ৫টায় মাঠে থাকিস।",legit,bn_script
+"ঈদ স্পেশাল! সব শার্টে ২৫% ছাড়। শুধু আজ ও কাল। আমাদের শো-রুমে আসুন।",promo,bn_script

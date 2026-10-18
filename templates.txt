@@ -1,0 +1,11 @@
+norm
+আপনার মোবাইল রিচার্জ করতে কল করুন: <phone>                                                                                                          6
+আপনার সঞ্চয় দ্বিগুণ করার সুযোগ! কল করুন: <phone>                                                                                                   5
+আপনার জমি বিক্রির টাকা জমা হয়েছে, কল করুন: <phone>                                                                                                 5
+<phone> নাম্বারে কল করুন।                                                                                                                           5
+private! your <num> account statement for shows <num> un-redeemed s. i. m. points. call <phone> identifier code: <num> expires <num>/<num>/<num>    4
+আপনি <num> ভরি সোনা জিতেছেন! বিস্তারিত জানতে কল করুন: <phone>                                                                                       4
+<phone> এই নাম্বারে রকেটে টাকা পাঠান।                                                                                                               4
+<num>,<num> টাকা বিনিয়োগে <num>,<num> টাকা পান! কল করুন: <phone>                                                                                   4
+<num>,<num>,<num> টাকা বিনিয়োগে <num>,<num>,<num> টাকা পান! কল করুন: <phone>                                                                       4
+<num>৳ ক্যাশব্যাক! <num>জিবি+<num>মি.@<num>৳ <num>দিন, নিয়ে নাও: <url>                                                                             4

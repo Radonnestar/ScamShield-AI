@@ -1,0 +1,17 @@
+venv/
+__pycache__/
+*.pyc
+data/
+merged.csv
+merged_aug.csv
+*.joblib
+banglish_preview.txt
+peek_*.txt
+bangla_peek.txt
+label_review.csv
+*errors*.csv
+reality_check_real.csv
+reality_results.csv
+holdout_final.csv
+.env
+.vscode/
