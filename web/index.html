@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ScamShield - ask Cyber</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1FF; --card:#fff; --ink:#15173F; --muted:#5A5E8A; --line:#D9DEFA;
+  --brand:#4B3DFF; --brand-dark:#3427D6;
+  --danger:#E5383B; --caution:#F5A300; --safe:#13A25A; --promo:#0098C4; --neutral:#6B6F99;
+  --v:var(--neutral); --v-soft:#ECEDF6;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Hind Siliguri",system-ui,sans-serif;font-size:18px;line-height:1.55}
+h1,h2,.display{font-family:"Bricolage Grotesque","Hind Siliguri",sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:0}
+.wrap{max-width:920px;margin:0 auto;padding:0 16px}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:6px}
+
+/* top bar */
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:22px}
+.seg{display:inline-flex;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;font:inherit;font-size:15px;font-weight:600;padding:5px 14px;border-radius:999px;cursor:pointer;color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:20px 0 28px}
+.hero h1{font-size:clamp(38px,7vw,68px)}
+.hero p{max-width:34em;color:var(--muted);margin:14px 0 0}
+.hero svg{width:clamp(110px,22vw,200px);height:auto}
+@media(max-width:560px){.hero{grid-template-columns:1fr}.hero svg{order:-1;width:96px}}
+
+/* checker */
+.checker{background:var(--card);border:2px solid var(--ink);border-radius:20px;padding:18px;box-shadow:6px 6px 0 var(--ink)}
+.checker label.big{display:block;font-weight:700;margin-bottom:8px}
+textarea{width:100%;min-height:150px;resize:vertical;border:2px solid var(--line);border-radius:12px;padding:14px;font:inherit;color:var(--ink);background:#FAFBFF}
+textarea:focus{border-color:var(--brand);outline:none;box-shadow:0 0 0 4px #4b3dff29}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.chips span.t{color:var(--muted);font-size:15px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:3px 12px;font:inherit;font-size:15px;cursor:pointer;color:var(--ink)}
+.chip:hover{border-color:var(--brand);color:var(--brand)}
+.deep{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:15px;color:var(--muted)}
+.deep input{width:20px;height:20px;margin-top:3px;accent-color:var(--brand)}
+.go{margin-left:auto;background:var(--brand);color:#fff;border:0;border-radius:14px;font:inherit;font-weight:700;font-size:19px;padding:12px 28px;cursor:pointer;box-shadow:0 4px 0 var(--brand-dark)}
+.go:hover{background:#5b4fff}
+.go:active{transform:translateY(3px);box-shadow:0 1px 0 var(--brand-dark)}
+.go[disabled]{opacity:.6;cursor:wait}
+.ghost{background:none;border:0;font:inherit;font-size:15px;color:var(--muted);text-decoration:underline;cursor:pointer}
+.error{color:var(--danger);font-weight:600;margin-top:10px}
+
+/* result */
+#result{margin:28px 0 8px}
+.verdict{background:var(--v);color:#fff;border:2px solid var(--ink);border-radius:20px;padding:22px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;box-shadow:6px 6px 0 var(--ink)}
+.verdict.light{color:var(--ink)}
+.stamp{width:92px;height:92px;border-radius:50%;border:5px solid currentColor;display:grid;place-items:center;transform:rotate(-8deg)}
+.stamp svg{width:50px;height:50px}
+.verdict h2{font-size:clamp(28px,5vw,44px)}
+@media(prefers-reduced-motion:no-preference){
+  .stamp.land{animation:land .45s cubic-bezier(.2,1.6,.4,1)}
+  @keyframes land{from{transform:rotate(-8deg) scale(2.2);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
+}
+.cyber{display:grid;grid-template-columns:auto 1fr;gap:14px;margin-top:18px;align-items:start}
+.cyber svg{width:58px;height:auto}
+.bubble{background:#fff;border:2px solid var(--ink);border-radius:6px 18px 18px 18px;padding:14px 16px}
+.bubble p{margin:0 0 8px}
+.bubble p:last-of-type{margin-bottom:12px}
+.listen{background:var(--ink);color:#fff;border:0;border-radius:999px;font:inherit;font-weight:600;font-size:16px;padding:7px 16px;cursor:pointer}
+.note{font-size:14px;color:var(--muted);margin-top:8px}
+details{background:#fff;border:2px solid var(--line);border-radius:14px;margin-top:12px;padding:0 16px}
+summary{cursor:pointer;font-weight:700;padding:12px 0}
+details[open]{padding-bottom:12px}
+.link{border-left:6px solid var(--neutral);padding:6px 12px;margin:10px 0;background:#F6F7FF;border-radius:0 10px 10px 0}
+.link.ok{border-color:var(--safe)}.link.check{border-color:var(--caution)}.link.risky{border-color:var(--danger)}
+.link b{word-break:break-all}
+.link ul{margin:6px 0 0;padding-left:20px;font-size:16px}
+.bar{display:grid;grid-template-columns:110px 1fr 50px;gap:10px;align-items:center;margin:8px 0;font-size:16px}
+.bar i{display:block;height:14px;border-radius:7px;background:var(--line);overflow:hidden}
+.bar i b{display:block;height:100%;background:var(--brand)}
+.words span{display:inline-block;border-radius:8px;padding:1px 9px;margin:3px 4px 3px 0;font-size:16px}
+.up{background:#FFE1E2}.down{background:#D7F3E3}
+footer{margin:36px 0 40px;font-size:14px;color:var(--muted)}
+.sr{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg width="30" height="34" viewBox="0 0 60 68" aria-hidden="true"><path d="M30 3 54 12v20c0 17-11 28-24 33C17 60 6 49 6 32V12z" fill="#4B3DFF" stroke="#15173F" stroke-width="4" stroke-linejoin="round"/><path d="m19 33 8 8 15-17" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      ScamShield
+    </div>
+    <div class="seg" role="group" aria-label="Language">
+      <button data-l="en" aria-pressed="true">English</button>
+      <button data-l="bn" aria-pressed="false" lang="bn">বাংলা</button>
+      <button data-l="bnl" aria-pressed="false">Banglish</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1 id="t-hero"></h1>
+      <p id="t-sub"></p>
+    </div>
+    <svg viewBox="0 0 200 220" aria-hidden="true">
+      <path d="M100 8 180 38v68c0 56-36 92-80 106C56 198 20 162 20 106V38z" fill="#4B3DFF" stroke="#15173F" stroke-width="7" stroke-linejoin="round"/>
+      <rect x="48" y="62" width="104" height="72" rx="22" fill="#fff" stroke="#15173F" stroke-width="6"/>
+      <circle cx="78" cy="98" r="11" fill="#15173F"/><circle cx="122" cy="98" r="11" fill="#15173F"/>
+      <circle cx="82" cy="94" r="3.5" fill="#fff"/><circle cx="126" cy="94" r="3.5" fill="#fff"/>
+      <path d="M100 62V44" stroke="#15173F" stroke-width="6" stroke-linecap="round"/><circle cx="100" cy="40" r="8" fill="#F5A300" stroke="#15173F" stroke-width="5"/>
+      <path d="M84 156h32" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+    </svg>
+  </section>
+
+  <main>
+    <form class="checker" id="form">
+      <label class="big" for="msg" id="t-label"></label>
+      <textarea id="msg" maxlength="5000"></textarea>
+      <div class="chips" id="chips"><span class="t" id="t-try"></span></div>
+      <label class="deep"><input type="checkbox" id="deep"><span id="t-deep"></span></label>
+      <div class="row">
+        <button type="button" class="ghost" id="clear"></button>
+        <button class="go" id="go" type="submit"></button>
+      </div>
+      <div class="error" id="err" role="alert"></div>
+    </form>
+
+    <div id="result" aria-live="polite"></div>
+  </main>
+
+  <footer id="t-foot"></footer>
+</div>
+
+<script>
+"use strict";
+/* ---------- 1. Words shown on screen, in three languages ----------
+   Everything the page says lives here, so adding a language later means adding one block. */
+const UI = {
+  en:{hero:"Got a strange message? Ask Cyber.",sub:"Paste an SMS, WhatsApp or email text. Cyber tells you if it looks like a scam, an ad, or a normal message, and what to do next.",
+      label:"Paste the message here",ph:"Example: Your bKash account will be closed. Click the link to verify now.",
+      tryit:"Try an example:",deep:"Look deeper at short links (Cyber will contact the short link's service, never the website behind it).",
+      check:"Check message",checking:"Checking...",clear:"Clear",listen:"Listen to Cyber",stop:"Stop",
+      empty:"Paste a message first.",fail:"Could not reach the ScamShield server. Is it running?",
+      v:{suspicious:"Looks like a scam",careful:"Be careful","not sure":"Cyber is not sure",legit:"Looks normal",promo:"Looks like an ad"},
+      links:"Links in this message",nolinks:"No links found.",why:"How sure is the model?",words:"Words that mattered",
+      up:"Pushed towards scam",down:"Pushed towards safe",novoice:"This device has no voice for this language. Try Microsoft Edge or Chrome, or switch to English.",
+      foot:"ScamShield is a helper, not a guarantee. It can be wrong in both directions. When money or passwords are involved, confirm through the official app or hotline. Link safety lookups use the Google Safe Browsing service when enabled; advisory provided by Google.",
+      ex:["Your bKash account is suspended. Verify here: http://bkash-help.com/verify","20% off all shoes this weekend at Daraz!","Your OTP is 482913. Do not share it with anyone."]},
+  bn:{hero:"অদ্ভুত মেসেজ পেয়েছেন? সাইবারকে জিজ্ঞেস করুন।",sub:"এসএমএস, হোয়াটসঅ্যাপ বা ইমেইলের লেখা পেস্ট করুন। সাইবার বলবে এটা প্রতারণা, বিজ্ঞাপন নাকি সাধারণ মেসেজ, আর এখন কী করবেন।",
+      label:"মেসেজটি এখানে পেস্ট করুন",ph:"যেমন: আপনার বিকাশ অ্যাকাউন্ট বন্ধ হয়ে যাবে। এখনই লিংকে ক্লিক করে ভেরিফাই করুন।",
+      tryit:"উদাহরণ দেখুন:",deep:"শর্ট লিংক আরও ভালোভাবে দেখুন (সাইবার শুধু শর্ট লিংকের সেবাটির সঙ্গে যোগাযোগ করবে, আসল ওয়েবসাইটে কখনো ঢুকবে না)।",
+      check:"মেসেজ যাচাই করুন",checking:"যাচাই হচ্ছে...",clear:"মুছুন",listen:"সাইবারের কথা শুনুন",stop:"থামুন",
+      empty:"আগে একটি মেসেজ পেস্ট করুন।",fail:"ScamShield সার্ভারের সঙ্গে যোগাযোগ করা যাচ্ছে না। সার্ভার চালু আছে তো?",
+      v:{suspicious:"প্রতারণা মনে হচ্ছে",careful:"সাবধান থাকুন","not sure":"সাইবার নিশ্চিত নয়",legit:"স্বাভাবিক মনে হচ্ছে",promo:"বিজ্ঞাপন মনে হচ্ছে"},
+      links:"মেসেজের লিংক",nolinks:"কোনো লিংক পাওয়া যায়নি।",why:"মডেল কতটা নিশ্চিত?",words:"যেসব শব্দ প্রভাব ফেলেছে",
+      up:"প্রতারণার দিকে টেনেছে",down:"নিরাপদের দিকে টেনেছে",novoice:"এই ডিভাইসে বাংলা ভয়েস নেই। Microsoft Edge বা Chrome ব্যবহার করুন।",
+      foot:"ScamShield একটি সহায়ক, নিশ্চয়তা নয়। দুই দিকেই ভুল হতে পারে। টাকা বা পাসওয়ার্ডের ব্যাপার হলে অফিসিয়াল অ্যাপ বা হটলাইনে নিশ্চিত হয়ে নিন। চালু থাকলে লিংক যাচাইয়ে Google Safe Browsing ব্যবহার হয়; পরামর্শ সরবরাহ করেছে Google।",
+      ex:["আপনার বিকাশ অ্যাকাউন্ট বন্ধ হয়ে যাবে। এখনই ভেরিফাই করুন: http://bkash-help.com/verify","এই সপ্তাহান্তে দারাজে সব জুতায় ২০% ছাড়!","আপনার OTP 482913। কাউকে বলবেন না।"]},
+  bnl:{hero:"Ajib message peyechen? Cyber ke jiggesh korun.",sub:"SMS, WhatsApp ba email-er lekha paste korun. Cyber bolbe eta scam, ad naki normal message, ar ekhon ki korben.",
+      label:"Message ta ekhane paste korun",ph:"Jemon: Apnar bKash account bondho hoye jabe. Ekhoni link e click kore verify korun.",
+      tryit:"Example dekhun:",deep:"Short link ar bhalo kore dekhun (Cyber shudhu short link-er service er sathe jogajog korbe, asol website e kokhono dhukbe na).",
+      check:"Message check korun",checking:"Check hocche...",clear:"Muchun",listen:"Cyber-er kotha shunun",stop:"Thamun",
+      empty:"Age ekta message paste korun.",fail:"ScamShield server e jogajog hocche na. Server chalu ache to?",
+      v:{suspicious:"Scam moune hocche",careful:"Savdhan thakun","not sure":"Cyber nishchit noy",legit:"Normal moune hocche",promo:"Ad moune hocche"},
+      links:"Message-er link",nolinks:"Kono link paoa jayni.",why:"Model koto ta nishchit?",words:"Je shobdo gulo prabhav felechhe",
+      up:"Scam-er dike tenechhe",down:"Nirapod-er dike tenechhe",novoice:"Ei device e Bangla voice nei. Microsoft Edge ba Chrome use korun.",
+      foot:"ScamShield ekta sahayok, guarantee noy. Duidik e bhul hote pare. Taka ba password-er byapar hole official app ba hotline e confirm korun. Chalu thakle link check e Google Safe Browsing use hoy; advisory provided by Google.",
+      ex:["Apnar bKash account bondho hoye jabe. Ekhoni verify korun: http://bkash-help.com/verify","Ei weekend e Daraz e sob juta te 20% discount!","Apnar OTP 482913. Kauke bolben na."]}
+};
+/* verdict -> colour and the icon drawn inside the stamp. Colour carries the meaning, so it is kept in one place. */
+const VERDICT = {
+  suspicious:{c:"--danger",light:false,icon:'<path d="M12 3 2 21h20zM12 10v5M12 18v.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'},
+  careful:{c:"--caution",light:true,icon:'<path d="M12 3 2 21h20zM12 10v5M12 18v.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'},
+  legit:{c:"--safe",light:false,icon:'<path d="m4 12 5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'},
+  promo:{c:"--promo",light:false,icon:'<path d="M3 10v4h4l7 4V6L7 10zM17 9a4 4 0 0 1 0 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'},
+  "not sure":{c:"--neutral",light:false,icon:'<path d="M9 9a3 3 0 1 1 4 2.8c-.7.4-1 .9-1 1.7M12 18v.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>'}
+};
+const CYBER_SVG='<svg viewBox="0 0 200 220" aria-hidden="true"><path d="M100 8 180 38v68c0 56-36 92-80 106C56 198 20 162 20 106V38z" fill="#4B3DFF" stroke="#15173F" stroke-width="8"/><rect x="48" y="62" width="104" height="72" rx="22" fill="#fff" stroke="#15173F" stroke-width="7"/><circle cx="78" cy="98" r="12" fill="#15173F"/><circle cx="122" cy="98" r="12" fill="#15173F"/></svg>';
+
+/* ---------- 2. Small helpers ---------- */
+const $ = id => document.getElementById(id);
+/* el() builds elements with textContent, never innerHTML, so text from a scam message
+   (or from the server) can never run as code on this page. */
+function el(tag, attrs, ...kids){
+  const n = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs||{})) k==="class" ? n.className=v : n.setAttribute(k,v);
+  for (const k of kids) n.append(k);
+  return n;
+}
+let lang = "en", last = null;
+const t = () => UI[lang];
+
+/* ---------- 3. Translating the static page ---------- */
+function applyLang(){
+  const u = t();
+  document.documentElement.lang = lang==="bn" ? "bn" : "en";
+  $("t-hero").textContent=u.hero; $("t-sub").textContent=u.sub; $("t-label").textContent=u.label;
+  $("msg").placeholder=u.ph; $("t-deep").textContent=u.deep; $("go").textContent=u.check;
+  $("clear").textContent=u.clear; $("t-foot").textContent=u.foot; $("t-try").textContent=u.tryit;
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.l===lang));
+  const chips=$("chips"); chips.querySelectorAll(".chip").forEach(c=>c.remove());
+  u.ex.forEach((text,i)=>{ const b=el("button",{class:"chip",type:"button"},["A","B","C"][i]+": "+text.slice(0,26)+"..."); b.onclick=()=>{$("msg").value=text; $("msg").focus();}; chips.append(b); });
+  if(last) check();   // re-ask so Cyber answers in the new language
+}
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{lang=b.dataset.l; applyLang();});
+$("clear").onclick=()=>{$("msg").value="";$("result").replaceChildren();last=null;speechSynthesis&&speechSynthesis.cancel();};
+
+/* ---------- 4. Ask the API ---------- */
+async function check(ev){
+  if(ev) ev.preventDefault();
+  const text=$("msg").value.trim(), err=$("err"); err.textContent="";
+  if(!text){err.textContent=t().empty;return;}
+  const go=$("go"); go.disabled=true; go.textContent=t().checking;
+  try{
+    const r=await fetch("/check",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text,look_deeper:$("deep").checked,lang})});
+    if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error(j.detail||r.statusText);}
+    last=await r.json(); render(last);
+  }catch(e){
+    err.textContent = e instanceof TypeError ? t().fail : String(e.message||e);
+  }finally{ go.disabled=false; go.textContent=t().check; }
+}
+$("form").addEventListener("submit",check);
+
+/* ---------- 5. Draw the answer ---------- */
+function render(d){
+  const u=t(), key=VERDICT[d.verdict]?d.verdict:"not sure", V=VERDICT[key];
+  speechSynthesis&&speechSynthesis.cancel();
+  const out=$("result"); out.replaceChildren();
+
+  // the big coloured verdict card
+  const stamp=el("div",{class:"stamp land"}); stamp.innerHTML='<svg viewBox="0 0 24 24">'+V.icon+'</svg>'; // icon markup is ours (constant above), not user text
+  const card=el("div",{class:"verdict"+(V.light?" light":"")}, stamp, el("div",{}, el("h2",{}, u.v[key])));
+  card.style.setProperty("--v",`var(${V.c})`); out.append(card);
+
+  // Cyber's spoken-style explanation
+  const cy=d.cyber||{}, bubble=el("div",{class:"bubble"});
+  String(cy.text||"").split(/\n+/).filter(Boolean).forEach(p=>bubble.append(el("p",{},p)));
+  const cyber=el("div",{class:"cyber"});
+  cyber.insertAdjacentHTML("beforeend",CYBER_SVG);   // constant markup
+  if("speechSynthesis" in window && cy.speech_text){
+    const btn=el("button",{class:"listen",type:"button"},"🔊 "+u.listen);
+    btn.onclick=()=>speak(cy.speech_text,cy.speech_lang||"en-US",btn,note);
+    bubble.append(btn);
+  }
+  const note=el("div",{class:"note"}); bubble.append(note);
+  cyber.append(bubble); out.append(cyber);
+
+  // links
+  const links=d.links||[];
+  const ld=el("details",{open:links.length?"":null}, el("summary",{},u.links+" ("+links.length+")"));
+  if(!links.length) ld.append(el("p",{},u.nolinks));
+  links.forEach(l=>{
+    const box=el("div",{class:"link "+(l.level||"")}, el("b",{},l.url));
+    if(l.destination) box.append(el("div",{},"→ "+l.destination));
+    if((l.reasons||[]).length){const ul=el("ul");l.reasons.forEach(r=>ul.append(el("li",{},r)));box.append(ul);}
+    ld.append(box);
+  });
+  out.append(ld);
+
+  // probabilities
+  const pr=d.probabilities||{}, pd=el("details",{},el("summary",{},u.why));
+  Object.entries(pr).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
+    const pct=Math.round(v*100);
+    pd.append(el("div",{class:"bar"},el("span",{},k),el("i",{},Object.assign(el("b"),{style:"width:"+pct+"%"})),el("span",{},pct+"%")));
+  });
+  out.append(pd);
+
+  // words that mattered (server may send [word, number] pairs or objects)
+  const norm=a=>(a||[]).map(x=>Array.isArray(x)?x[0]:(x.word||x[0]||String(x)));
+  const up=norm(d.words_raising), down=norm(d.words_lowering);
+  if(up.length||down.length){
+    const wd=el("details",{},el("summary",{},u.words)), box=el("div",{class:"words"});
+    if(up.length){box.append(el("div",{class:"note"},u.up));up.forEach(w=>box.append(el("span",{class:"up"},w)));}
+    if(down.length){box.append(el("div",{class:"note"},u.down));down.forEach(w=>box.append(el("span",{class:"down"},w)));}
+    wd.append(box); out.append(wd);
+  }
+  card.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"nearest"});
+}
+
+/* ---------- 6. Voice (the browser's built-in speech, nothing is uploaded) ---------- */
+function speak(text,code,btn,note){
+  const s=speechSynthesis;
+  if(s.speaking){s.cancel();btn.textContent="🔊 "+t().listen;return;}
+  const u=new SpeechSynthesisUtterance(text); u.lang=code;
+  const v=s.getVoices().find(v=>v.lang.replace("_","-").toLowerCase().startsWith(code.slice(0,2).toLowerCase()));
+  if(v) u.voice=v; else if(code.startsWith("bn")) note.textContent=t().novoice;
+  u.onend=u.onerror=()=>{btn.textContent="🔊 "+t().listen;};
+  btn.textContent="⏹ "+t().stop; s.speak(u);
+}
+if("speechSynthesis" in window) speechSynthesis.getVoices();  // some browsers load voices lazily
+
+applyLang();
+</script>
+</body>
+</html>
