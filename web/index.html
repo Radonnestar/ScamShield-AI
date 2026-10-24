@@ -9,97 +9,321 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#EEF1FF; --card:#fff; --ink:#15173F; --muted:#5A5E8A; --line:#D9DEFA;
-  --brand:#4B3DFF; --brand-dark:#3427D6;
+  --paper:#F1F0FF; --card:#fff; --ink:#15173F; --muted:#575B88; --line:#DAD9FA;
+  --brand:#4B3DFF; --brand-dark:#3427D6; --pink:#FF4FA3; --cyan:#19D3F3; --sun:#FFC93C; --mint:#2BD9A0;
   --danger:#E5383B; --caution:#F5A300; --safe:#13A25A; --promo:#0098C4; --neutral:#6B6F99;
-  --v:var(--neutral); --v-soft:#ECEDF6;
+  --v:var(--neutral); --v2:#9A8CFF;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:"Hind Siliguri",system-ui,sans-serif;font-size:18px;line-height:1.55}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Hind Siliguri",system-ui,sans-serif;font-size:18px;line-height:1.55;overflow-x:hidden}
 h1,h2,.display{font-family:"Bricolage Grotesque","Hind Siliguri",sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:0}
-.wrap{max-width:920px;margin:0 auto;padding:0 16px}
+.wrap{max-width:940px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
 :focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:6px}
 
-/* top bar */
+/* drifting colour blobs behind everything */
+.blobs{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.blobs i{position:absolute;width:46vmax;height:46vmax;border-radius:50%;filter:blur(80px);opacity:.5;animation:drift 22s ease-in-out infinite alternate}
+.blobs i:nth-child(1){background:var(--pink);left:-12vmax;top:-10vmax}
+.blobs i:nth-child(2){background:var(--cyan);right:-14vmax;top:8vmax;animation-delay:-7s}
+.blobs i:nth-child(3){background:var(--sun);left:12vmax;bottom:-22vmax;animation-delay:-13s;opacity:.4}
+.blobs i:nth-child(4){background:var(--brand);right:4vmax;bottom:-18vmax;animation-delay:-3s;opacity:.35}
+@keyframes drift{to{transform:translate(8vmax,6vmax) scale(1.18)}}
+.tint{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .8s;background:radial-gradient(70% 60% at 50% 30%,var(--v),transparent 70%)}
+body.has-verdict .tint{opacity:.28}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:50;pointer-events:none}
+.flash{position:fixed;inset:0;z-index:40;pointer-events:none;background:var(--danger);opacity:0}
+.flash.go{animation:flash .7s ease-out}
+@keyframes flash{0%{opacity:.45}100%{opacity:0}}
+
 header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0}
 .brand{display:flex;align-items:center;gap:10px;font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:22px}
 .seg{display:inline-flex;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:3px}
-.seg button{border:0;background:none;font:inherit;font-size:15px;font-weight:600;padding:5px 14px;border-radius:999px;cursor:pointer;color:var(--ink)}
+.seg button{border:0;background:none;font:inherit;font-size:15px;font-weight:600;padding:5px 14px;border-radius:999px;cursor:pointer;color:var(--ink);transition:background .2s,color .2s}
 .seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
 
 /* hero */
-.hero{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:20px 0 28px}
-.hero h1{font-size:clamp(38px,7vw,68px)}
+.hero{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:14px 0 30px}
+.hero h1{font-size:clamp(38px,7vw,70px);background:linear-gradient(100deg,var(--ink) 0%,var(--brand) 40%,var(--pink) 75%,var(--ink) 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:ink 9s ease-in-out infinite alternate;padding-bottom:.08em}
+@keyframes ink{to{background-position:100% 0}}
 .hero p{max-width:34em;color:var(--muted);margin:14px 0 0}
-.hero svg{width:clamp(110px,22vw,200px);height:auto}
-@media(max-width:560px){.hero{grid-template-columns:1fr}.hero svg{order:-1;width:96px}}
+.cyber-col{display:flex;flex-direction:column;align-items:center;gap:8px;width:clamp(150px,24vw,220px)}
+.mascot-btn{background:none;border:0;padding:0;cursor:pointer;width:100%}
+.mascot{width:100%;height:auto;display:block;overflow:visible}
+.mascot .shell{fill:var(--brand)}
+.mascot .bulb{fill:var(--sun);transition:fill .3s}
+.mascot .m{display:none}
+.mascot[data-mood="idle"] .m-idle,.mascot[data-mood="happy"] .m-happy,.mascot[data-mood="alarm"] .m-alarm,.mascot[data-mood="worry"] .m-worry,.mascot[data-mood="hmm"] .m-hmm,.mascot[data-mood="scan"] .m-hmm{display:inline}
+.mascot .blink{animation:blink 5s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.08)}}
+.mascot[data-mood="scan"] .dart{animation:dart .45s ease-in-out infinite alternate}
+@keyframes dart{from{transform:translateX(-7px)}to{transform:translateX(7px)}}
+.mascot[data-mood="scan"] .bulb{animation:pulse .35s infinite alternate;fill:var(--cyan)}
+@keyframes pulse{to{opacity:.3}}
+.mascot[data-mood="alarm"] .bulb{fill:var(--danger);animation:pulse .25s infinite alternate}
+.mascot[data-mood="worry"] .bulb{fill:var(--caution)}
+.mascot[data-mood="happy"] .bulb{fill:var(--mint)}
+.mascot.act{animation:hop .6s}
+.mascot[data-mood="alarm"].act{animation:shake .5s}
+@keyframes hop{30%{transform:translateY(-16px) rotate(-3deg)}60%{transform:translateY(0) rotate(2deg)}}
+@keyframes shake{20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.float{animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
+.tip{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px 12px;font-size:15px;line-height:1.35;min-height:3.1em;width:100%;text-align:center;box-shadow:3px 3px 0 var(--ink)}
+.tip.pop{animation:pop .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+@media(max-width:600px){.hero{grid-template-columns:1fr}.cyber-col{order:-1;width:150px;margin:0 auto}}
 
 /* checker */
 .checker{background:var(--card);border:2px solid var(--ink);border-radius:20px;padding:18px;box-shadow:6px 6px 0 var(--ink)}
 .checker label.big{display:block;font-weight:700;margin-bottom:8px}
-textarea{width:100%;min-height:150px;resize:vertical;border:2px solid var(--line);border-radius:12px;padding:14px;font:inherit;color:var(--ink);background:#FAFBFF}
+.field{position:relative;border-radius:12px;overflow:hidden}
+textarea{width:100%;min-height:150px;resize:vertical;border:2px solid var(--line);border-radius:12px;padding:14px;font:inherit;color:var(--ink);background:#FAFAFF;display:block}
 textarea:focus{border-color:var(--brand);outline:none;box-shadow:0 0 0 4px #4b3dff29}
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.field.scanning textarea{border-color:var(--cyan)}
+.beam{position:absolute;left:0;right:0;top:0;height:56px;pointer-events:none;opacity:0;background:linear-gradient(180deg,transparent,#19d3f355 60%,#19d3f3cc 98%,var(--cyan) 100%);border-bottom:3px solid var(--cyan)}
+.field.scanning .beam{opacity:1;animation:sweep 1.1s ease-in-out infinite alternate}
+@keyframes sweep{from{transform:translateY(-56px)}to{transform:translateY(var(--h,150px))}}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
 .chips span.t{color:var(--muted);font-size:15px}
-.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:3px 12px;font:inherit;font-size:15px;cursor:pointer;color:var(--ink)}
-.chip:hover{border-color:var(--brand);color:var(--brand)}
+.chip{border:2px solid var(--c,var(--line));background:#fff;border-radius:999px;padding:3px 12px;font:inherit;font-size:15px;cursor:pointer;color:var(--ink);transition:transform .15s,background .15s}
+.chip:hover{background:var(--c);color:#fff;transform:translateY(-2px) rotate(-1deg)}
+.chip:nth-of-type(1){--c:var(--pink)}.chip:nth-of-type(2){--c:var(--promo)}.chip:nth-of-type(3){--c:var(--safe)}
 .deep{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:15px;color:var(--muted)}
 .deep input{width:20px;height:20px;margin-top:3px;accent-color:var(--brand)}
-.go{margin-left:auto;background:var(--brand);color:#fff;border:0;border-radius:14px;font:inherit;font-weight:700;font-size:19px;padding:12px 28px;cursor:pointer;box-shadow:0 4px 0 var(--brand-dark)}
-.go:hover{background:#5b4fff}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.go{margin-left:auto;background:linear-gradient(100deg,var(--brand),#7A4DFF 60%,var(--pink));color:#fff;border:0;border-radius:14px;font:inherit;font-weight:700;font-size:19px;padding:12px 28px;cursor:pointer;box-shadow:0 4px 0 var(--brand-dark);transition:transform .15s,filter .15s}
+.go:hover{filter:brightness(1.1);transform:translateY(-2px)}
 .go:active{transform:translateY(3px);box-shadow:0 1px 0 var(--brand-dark)}
-.go[disabled]{opacity:.6;cursor:wait}
+.go[disabled]{opacity:.7;cursor:wait}
 .ghost{background:none;border:0;font:inherit;font-size:15px;color:var(--muted);text-decoration:underline;cursor:pointer}
 .error{color:var(--danger);font-weight:600;margin-top:10px}
 
 /* result */
-#result{margin:28px 0 8px}
-.verdict{background:var(--v);color:#fff;border:2px solid var(--ink);border-radius:20px;padding:22px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;box-shadow:6px 6px 0 var(--ink)}
+#result{margin:30px 0 8px}
+.verdict{background:linear-gradient(120deg,var(--v),var(--v2));color:#fff;border:2px solid var(--ink);border-radius:20px;padding:22px;display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;box-shadow:6px 6px 0 var(--ink)}
 .verdict.light{color:var(--ink)}
-.stamp{width:92px;height:92px;border-radius:50%;border:5px solid currentColor;display:grid;place-items:center;transform:rotate(-8deg)}
-.stamp svg{width:50px;height:50px}
-.verdict h2{font-size:clamp(28px,5vw,44px)}
-@media(prefers-reduced-motion:no-preference){
-  .stamp.land{animation:land .45s cubic-bezier(.2,1.6,.4,1)}
-  @keyframes land{from{transform:rotate(-8deg) scale(2.2);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
-}
-.cyber{display:grid;grid-template-columns:auto 1fr;gap:14px;margin-top:18px;align-items:start}
-.cyber svg{width:58px;height:auto}
-.bubble{background:#fff;border:2px solid var(--ink);border-radius:6px 18px 18px 18px;padding:14px 16px}
+.verdict.shake{animation:shake .55s}
+.stamp{width:96px;height:96px;border-radius:50%;border:5px solid currentColor;display:grid;place-items:center;transform:rotate(-8deg)}
+.stamp svg{width:52px;height:52px}
+.verdict h2{font-size:clamp(28px,5vw,46px)}
+.stamp.land{animation:land .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes land{from{transform:rotate(-8deg) scale(2.4);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
+.gauge{width:190px;text-align:center}
+.gauge svg{width:100%;display:block}
+.needle{transform-origin:100px 100px;transform:rotate(-90deg);transition:transform 1.3s cubic-bezier(.3,1.5,.5,1)}
+.gauge .pct{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:30px;line-height:1;margin-top:-4px}
+.gauge .cap{font-size:14px;opacity:.9}
+@media(max-width:640px){.verdict{grid-template-columns:auto 1fr}.gauge{grid-column:1/-1;margin:0 auto}}
+.cyber{display:grid;grid-template-columns:70px 1fr;gap:14px;margin-top:20px;align-items:start}
+.cyber .mascot{width:70px}
+.bubble{background:#fff;border:2px solid var(--ink);border-radius:6px 18px 18px 18px;padding:14px 16px;min-height:60px}
 .bubble p{margin:0 0 8px}
-.bubble p:last-of-type{margin-bottom:12px}
-.listen{background:var(--ink);color:#fff;border:0;border-radius:999px;font:inherit;font-weight:600;font-size:16px;padding:7px 16px;cursor:pointer}
+.listen{background:var(--ink);color:#fff;border:0;border-radius:999px;font:inherit;font-weight:600;font-size:16px;padding:7px 16px;cursor:pointer;margin-top:4px}
+.listen:hover{background:var(--brand)}
 .note{font-size:14px;color:var(--muted);margin-top:8px}
 details{background:#fff;border:2px solid var(--line);border-radius:14px;margin-top:12px;padding:0 16px}
 summary{cursor:pointer;font-weight:700;padding:12px 0}
 details[open]{padding-bottom:12px}
-.link{border-left:6px solid var(--neutral);padding:6px 12px;margin:10px 0;background:#F6F7FF;border-radius:0 10px 10px 0}
+.marked{font-size:19px;line-height:2}
+.marked mark{border-radius:8px;padding:1px 6px;color:inherit;background:none;transition:transform .15s}
+.marked mark:hover{transform:scale(1.12)}
+.marked .hot{background:#FFD0D2;box-shadow:inset 0 -3px 0 var(--danger)}
+.marked .cool{background:#CDF3DF;box-shadow:inset 0 -3px 0 var(--safe)}
+.marked .risky{background:var(--danger);color:#fff}
+.marked .check{background:var(--caution)}
+.marked .ok{background:#CDF3DF}
+.legend{font-size:14px;color:var(--muted);margin-top:6px}
+.link{border-left:6px solid var(--neutral);padding:6px 12px;margin:10px 0;background:#F6F6FF;border-radius:0 10px 10px 0}
 .link.ok{border-color:var(--safe)}.link.check{border-color:var(--caution)}.link.risky{border-color:var(--danger)}
 .link b{word-break:break-all}
 .link ul{margin:6px 0 0;padding-left:20px;font-size:16px}
 .bar{display:grid;grid-template-columns:110px 1fr 50px;gap:10px;align-items:center;margin:8px 0;font-size:16px}
 .bar i{display:block;height:14px;border-radius:7px;background:var(--line);overflow:hidden}
-.bar i b{display:block;height:100%;background:var(--brand)}
-.words span{display:inline-block;border-radius:8px;padding:1px 9px;margin:3px 4px 3px 0;font-size:16px}
-.up{background:#FFE1E2}.down{background:#D7F3E3}
-footer{margin:36px 0 40px;font-size:14px;color:var(--muted)}
-.sr{position:absolute;left:-9999px}
+.bar i b{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--pink));transition:width 1s cubic-bezier(.2,.9,.3,1)}
+footer{margin:36px 0 0;padding-bottom:170px;font-size:14px;color:var(--muted)}
+
+/* ===== Cyber the roaming character ===== */
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.roambtn{border:2px solid var(--ink);background:#fff;border-radius:999px;font:inherit;font-size:15px;font-weight:600;padding:5px 14px;cursor:pointer;color:var(--ink)}
+.roambtn[aria-pressed="true"]{background:var(--mint)}
+.rover-wrap{position:fixed;top:0;left:0;width:clamp(84px,13vw,130px);z-index:30;pointer-events:none;will-change:transform}
+.rover-wrap[hidden]{display:none}
+.rover-wrap .rover{pointer-events:auto;cursor:pointer;width:100%}
+.jumper.jump{animation:jumpy .6s cubic-bezier(.3,.7,.4,1)}
+@keyframes jumpy{45%{transform:translateY(-70px)}}
+.say{display:none;position:absolute;left:50%;top:-6px;margin-left:-16px;font-size:26px;line-height:1;pointer-events:none}
+.say.pop{animation:pop .4s cubic-bezier(.2,1.6,.4,1)}
+.rover{--a:0deg;--b:0deg;--k:0deg;--d:.7s;--lean:0deg;--bh:0px}
+.rover [class^="th"],.rover [class^="sh"],.rover [class^="up"],.rover [class^="fore"],.rover .fig{transition:none}
+.rover .thL{transform-origin:68px 120px}.rover .thR{transform-origin:92px 120px}
+.rover .shL{transform-origin:68px 150px}.rover .shR{transform-origin:92px 150px}
+.rover .upL{transform-origin:44px 84px}.rover .upR{transform-origin:116px 84px}
+.rover .foreL{transform-origin:36px 106px}.rover .foreR{transform-origin:124px 106px}
+.rover .fig{transform-origin:80px 182px;animation:breath 3s ease-in-out infinite}
+.rover .p-ball{transform-origin:112px 182px}
+.rover .p-can,.rover .p-mag,.rover .p-sign,.rover .p-ball,.rover .sg,.rover .closed{display:none}
+@keyframes breath{50%{transform:scaleY(1.025)}}
+@keyframes sw{0%,100%{transform:rotate(calc(var(--a) * -1))}50%{transform:rotate(var(--a))}}
+@keyframes ar{0%,100%{transform:rotate(calc(var(--b) * -1))}50%{transform:rotate(var(--b))}}
+@keyframes kn{0%,15%,100%{transform:rotate(4deg)}55%{transform:rotate(var(--k))}85%{transform:rotate(calc(var(--k) * .4))}}
+@keyframes bobw{0%,50%,100%{transform:translateY(0) rotate(var(--lean))}25%,75%{transform:translateY(calc(var(--bh) * -1)) rotate(var(--lean))}}
+/* walking and running */
+.rover[data-act="walk"]{--a:26deg;--b:30deg;--k:55deg;--d:.7s;--bh:4px}
+.rover[data-act="run"]{--a:50deg;--b:64deg;--k:90deg;--d:.4s;--bh:8px;--lean:9deg}
+.rover[data-act="walk"] .thL,.rover[data-act="run"] .thL,.rover[data-act="walk"] .thR,.rover[data-act="run"] .thR{animation:sw var(--d) ease-in-out infinite}
+.rover[data-act="walk"] .thR,.rover[data-act="run"] .thR{animation-delay:calc(var(--d) / -2)}
+.rover[data-act="walk"] .shL,.rover[data-act="run"] .shL,.rover[data-act="walk"] .shR,.rover[data-act="run"] .shR{animation:kn var(--d) linear infinite}
+.rover[data-act="walk"] .shR,.rover[data-act="run"] .shR{animation-delay:calc(var(--d) / -2)}
+.rover[data-act="walk"] .upR,.rover[data-act="run"] .upR,.rover[data-act="walk"] .upL,.rover[data-act="run"] .upL{animation:ar var(--d) ease-in-out infinite}
+.rover[data-act="walk"] .upL,.rover[data-act="run"] .upL{animation-delay:calc(var(--d) / -2)}
+.rover[data-act="walk"] .foreL,.rover[data-act="walk"] .foreR{transform:rotate(-16deg)}
+.rover[data-act="run"] .foreL,.rover[data-act="run"] .foreR{transform:rotate(-55deg)}
+.rover[data-act="walk"] .fig,.rover[data-act="run"] .fig{animation:bobw calc(var(--d) / 1) linear infinite}
+/* drinking a can of juice, with sunglasses */
+.rover[data-act="drink"] .sg,.rover[data-act="drink"] .p-can{display:inline}
+.rover[data-act="drink"] .upR{animation:dUp 5s ease-in-out infinite}
+.rover[data-act="drink"] .foreR{animation:dFore 5s ease-in-out infinite}
+.rover[data-act="drink"] .fig{animation:chill 5s ease-in-out infinite}
+@keyframes dUp{0%,8%{transform:rotate(0)}22%,30%{transform:rotate(112deg)}34%{transform:rotate(104deg)}40%{transform:rotate(112deg)}46%{transform:rotate(104deg)}52%,78%{transform:rotate(112deg)}92%,100%{transform:rotate(0)}}
+@keyframes dFore{0%,8%{transform:rotate(0)}22%,78%{transform:rotate(-58deg)}92%,100%{transform:rotate(0)}}
+@keyframes chill{0%,100%{transform:rotate(0)}30%,70%{transform:rotate(-3deg)}}
+/* keepy-uppy with a ball */
+.rover[data-act="play"] .p-ball{display:inline;animation:spin .6s linear infinite}
+.rover[data-act="play"] .ballY{animation:bounce .9s infinite}
+@keyframes bounce{0%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.6,.4,1)}50%{transform:translateY(-120px);animation-timing-function:cubic-bezier(.6,0,.8,.4)}100%{transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rover[data-act="play"] .thR{animation:kick .9s infinite}
+.rover[data-act="play"] .shR{animation:kickk .9s infinite}
+.rover[data-act="play"] .upL{transform:rotate(60deg)}
+.rover[data-act="play"] .upR{transform:rotate(-60deg)}
+.rover[data-act="play"] .fig{animation:lean .9s ease-in-out infinite}
+@keyframes kick{0%,6%{transform:rotate(-55deg)}25%,100%{transform:rotate(8deg)}}
+@keyframes kickk{0%,6%{transform:rotate(10deg)}25%,100%{transform:rotate(25deg)}}
+@keyframes lean{0%,6%{transform:rotate(-4deg)}30%,100%{transform:rotate(0)}}
+/* dancing */
+.rover[data-act="dance"] .fig{animation:sway .5s ease-in-out infinite alternate}
+.rover[data-act="dance"] .upL{animation:dl .5s ease-in-out infinite alternate}
+.rover[data-act="dance"] .upR{animation:dr .5s ease-in-out infinite alternate}
+.rover[data-act="dance"] .thL{animation:dth .5s ease-in-out infinite alternate}
+.rover[data-act="dance"] .thR{animation:dth .5s ease-in-out infinite alternate-reverse}
+@keyframes sway{from{transform:translateY(0) rotate(-6deg)}to{transform:translateY(-7px) rotate(6deg)}}
+@keyframes dl{from{transform:rotate(40deg)}to{transform:rotate(165deg)}}
+@keyframes dr{from{transform:rotate(-165deg)}to{transform:rotate(-40deg)}}
+@keyframes dth{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+/* napping on his feet */
+.rover[data-act="nap"] .pupils{display:none}
+.rover[data-act="nap"] .closed{display:inline}
+.rover[data-act="nap"] .fig{animation:nod 3s ease-in-out infinite}
+@keyframes nod{0%,100%{transform:rotate(7deg)}50%{transform:rotate(12deg)}}
+/* waving */
+.rover[data-act="wave"] .upL{animation:wUp 2.9s ease-in-out infinite}
+.rover[data-act="wave"] .foreL{animation:wv .35s ease-in-out infinite alternate}
+@keyframes wUp{0%{transform:rotate(0)}15%,85%{transform:rotate(150deg)}100%{transform:rotate(0)}}
+@keyframes wv{from{transform:rotate(-28deg)}to{transform:rotate(28deg)}}
+/* looking for scams with a magnifying glass */
+.rover[data-act="search"] .p-mag{display:inline}
+.rover[data-act="search"] .upR{animation:sUp .5s ease-in-out infinite alternate}
+.rover[data-act="search"] .foreR{transform:rotate(-8deg)}
+.rover[data-act="search"] .fig{animation:hopS .5s ease-in-out infinite alternate}
+@keyframes sUp{from{transform:rotate(-78deg)}to{transform:rotate(-100deg)}}
+@keyframes hopS{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+/* scam alarm: stop sign held high, jumping */
+.rover[data-act="alert"] .p-sign{display:inline}
+.rover[data-act="alert"] .upR{transform:rotate(-168deg)}
+.rover[data-act="alert"] .upL{transform:rotate(168deg)}
+.rover[data-act="alert"] .fig{animation:alertJ .35s ease-in-out infinite alternate}
+@keyframes alertJ{from{transform:translateY(0)}to{transform:translateY(-16px)}}
+/* careful: hand up like "wait" */
+.rover[data-act="careful"] .upR{animation:cUp 1s ease-in-out infinite alternate}
+@keyframes cUp{from{transform:rotate(-150deg)}to{transform:rotate(-160deg)}}
+.rover[data-act="careful"] .fig{animation:chill 1.4s ease-in-out infinite}
+/* cheering */
+.rover[data-act="cheer"] .upL{transform:rotate(165deg)}
+.rover[data-act="cheer"] .upR{transform:rotate(-165deg)}
+.rover[data-act="cheer"] .shL,.rover[data-act="cheer"] .shR{transform:rotate(35deg)}
+.rover[data-act="cheer"] .fig{animation:jump .6s ease-in-out infinite}
+@keyframes jump{0%,100%{transform:translateY(0) scaleY(.94)}50%{transform:translateY(-30px) scaleY(1.03)}}
+.rover[data-act="shrug"] .fig{animation:tilt 1.2s ease-in-out infinite alternate}
+@keyframes tilt{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+
+
+/* ===== more activities ===== */
+.fx{position:fixed;left:0;top:0;z-index:31;pointer-events:none;font-size:26px;line-height:1}
+.fx[hidden]{display:none}
+#fball.roll{animation:spin .5s linear infinite}
+#fdisc{animation:disc .35s linear infinite}
+@keyframes disc{from{transform:rotate(0) scaleY(.55)}to{transform:rotate(360deg) scaleY(.55)}}
+.rover .p-book,.rover .p-phone,.rover .p-flash,.rover .carg{display:none}
+.rover .w1{transform-origin:38px 166px}.rover .w2{transform-origin:124px 166px}
+.rover .pageflip{transform-origin:80px 110px}
+/* reading a book: both hands hold it, a page turns now and then */
+.rover[data-act="read"] .p-book{display:inline}
+.rover[data-act="read"] .upL{transform:rotate(-5deg)}.rover[data-act="read"] .foreL{transform:rotate(-69deg)}
+.rover[data-act="read"] .upR{transform:rotate(5deg)}.rover[data-act="read"] .foreR{transform:rotate(69deg)}
+.rover[data-act="read"] .pageflip{animation:turn 3.4s ease-in-out infinite}
+@keyframes turn{0%,70%{transform:scaleX(1)}85%{transform:scaleX(-1)}100%{transform:scaleX(1)}}
+.rover[data-act="read"] .fig{animation:nodRead 3.4s ease-in-out infinite}
+@keyframes nodRead{0%,100%{transform:rotate(2deg)}50%{transform:rotate(4deg)}}
+/* scrolling on his phone */
+.rover[data-act="phone"] .p-phone{display:inline}
+.rover[data-act="phone"] .upR{transform:rotate(13deg)}.rover[data-act="phone"] .foreR{transform:rotate(84deg)}
+.rover[data-act="phone"] .fig{animation:nodRead 2s ease-in-out infinite}
+/* selfie: phone held out, peace sign, flash */
+.rover[data-act="selfie"] .p-phone,.rover[data-act="selfie"] .p-flash{display:inline}
+.rover[data-act="selfie"] .upR{transform:rotate(-126deg)}.rover[data-act="selfie"] .foreR{transform:rotate(-20deg)}
+.rover[data-act="selfie"] .upL{transform:rotate(150deg)}
+.rover[data-act="selfie"] .foreL{animation:wv .5s ease-in-out infinite alternate}
+.rover[data-act="selfie"] .fig{animation:tilt 1.4s ease-in-out infinite alternate}
+.rover[data-act="selfie"] .p-flash{animation:snap 1.8s infinite}
+@keyframes snap{0%,80%{opacity:0}86%{opacity:.95}100%{opacity:0}}
+/* driving a car */
+.rover[data-act="drive"] .carg,.rover[data-act="drive"] .sg{display:inline}
+.rover[data-act="drive"] .upL{transform:rotate(-19deg)}.rover[data-act="drive"] .foreL{transform:rotate(-61deg)}
+.rover[data-act="drive"] .upR{transform:rotate(19deg)}.rover[data-act="drive"] .foreR{transform:rotate(61deg)}
+.rover[data-act="drive"] .fig{animation:none}
+.rover[data-act="drive"] .thL,.rover[data-act="drive"] .thR{display:none}
+.rover[data-act="drive"] .wheel{animation:spin .25s linear infinite}
+.rover[data-act="drive"] .carbody{animation:carb .2s ease-in-out infinite alternate}
+@keyframes carb{to{transform:translateY(-2px)}}
+/* kicking a real ball */
+.rover[data-act="kick"] .thR{animation:kickOnce .35s ease-out both}
+.rover[data-act="kick"] .shR{animation:kickShin .35s ease-out both}
+.rover[data-act="kick"] .upL{transform:rotate(45deg)}.rover[data-act="kick"] .upR{transform:rotate(-45deg)}
+@keyframes kickOnce{0%{transform:rotate(30deg)}45%{transform:rotate(-65deg)}100%{transform:rotate(0)}}
+@keyframes kickShin{0%{transform:rotate(60deg)}45%{transform:rotate(4deg)}100%{transform:rotate(8deg)}}
+/* frisbee: throw, then catch with both hands */
+.rover[data-act="frisbee"] .upR{animation:thr 2.6s ease-in-out infinite}
+.rover[data-act="frisbee"] .foreR{transform:rotate(-20deg)}
+.rover[data-act="frisbee"] .upL{animation:catchL 2.6s ease-in-out infinite}
+@keyframes thr{0%{transform:rotate(48deg)}10%{transform:rotate(-80deg)}24%,70%{transform:rotate(-22deg)}82%,90%{transform:rotate(-82deg)}100%{transform:rotate(48deg)}}
+@keyframes catchL{0%,70%{transform:rotate(0)}82%,90%{transform:rotate(-80deg)}100%{transform:rotate(0)}}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+<div class="blobs" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="tint" aria-hidden="true"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="flash" id="flash" aria-hidden="true"></div>
+
+<div class="rover-wrap" id="rover" aria-hidden="true"></div>
+<div class="fx" id="fball" hidden aria-hidden="true">⚽</div>
+<div class="fx" id="fdisc" hidden aria-hidden="true">🥏</div>
+
 <div class="wrap">
   <header class="top">
     <div class="brand">
       <svg width="30" height="34" viewBox="0 0 60 68" aria-hidden="true"><path d="M30 3 54 12v20c0 17-11 28-24 33C17 60 6 49 6 32V12z" fill="#4B3DFF" stroke="#15173F" stroke-width="4" stroke-linejoin="round"/><path d="m19 33 8 8 15-17" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       ScamShield
     </div>
+    <div class="tools"><button class="roambtn" id="roamBtn" type="button" aria-pressed="true"></button>
     <div class="seg" role="group" aria-label="Language">
       <button data-l="en" aria-pressed="true">English</button>
       <button data-l="bn" aria-pressed="false" lang="bn">বাংলা</button>
       <button data-l="bnl" aria-pressed="false">Banglish</button>
-    </div>
+    </div></div>
   </header>
 
   <section class="hero">
@@ -107,20 +331,16 @@ footer{margin:36px 0 40px;font-size:14px;color:var(--muted)}
       <h1 id="t-hero"></h1>
       <p id="t-sub"></p>
     </div>
-    <svg viewBox="0 0 200 220" aria-hidden="true">
-      <path d="M100 8 180 38v68c0 56-36 92-80 106C56 198 20 162 20 106V38z" fill="#4B3DFF" stroke="#15173F" stroke-width="7" stroke-linejoin="round"/>
-      <rect x="48" y="62" width="104" height="72" rx="22" fill="#fff" stroke="#15173F" stroke-width="6"/>
-      <circle cx="78" cy="98" r="11" fill="#15173F"/><circle cx="122" cy="98" r="11" fill="#15173F"/>
-      <circle cx="82" cy="94" r="3.5" fill="#fff"/><circle cx="126" cy="94" r="3.5" fill="#fff"/>
-      <path d="M100 62V44" stroke="#15173F" stroke-width="6" stroke-linecap="round"/><circle cx="100" cy="40" r="8" fill="#F5A300" stroke="#15173F" stroke-width="5"/>
-      <path d="M84 156h32" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
-    </svg>
+    <div class="cyber-col">
+      <button class="mascot-btn float" id="heroCyber" type="button"></button>
+      <div class="tip" id="tip" aria-live="polite"></div>
+    </div>
   </section>
 
   <main>
     <form class="checker" id="form">
       <label class="big" for="msg" id="t-label"></label>
-      <textarea id="msg" maxlength="5000"></textarea>
+      <div class="field" id="field"><textarea id="msg" maxlength="5000"></textarea><div class="beam"></div></div>
       <div class="chips" id="chips"><span class="t" id="t-try"></span></div>
       <label class="deep"><input type="checkbox" id="deep"><span id="t-deep"></span></label>
       <div class="row">
@@ -129,127 +349,226 @@ footer{margin:36px 0 40px;font-size:14px;color:var(--muted)}
       </div>
       <div class="error" id="err" role="alert"></div>
     </form>
-
     <div id="result" aria-live="polite"></div>
   </main>
-
   <footer id="t-foot"></footer>
 </div>
 
 <script>
 "use strict";
-/* ---------- 1. Words shown on screen, in three languages ----------
-   Everything the page says lives here, so adding a language later means adding one block. */
+/* ============ 1. Everything the page says, in three languages ============ */
 const UI = {
   en:{hero:"Got a strange message? Ask Cyber.",sub:"Paste an SMS, WhatsApp or email text. Cyber tells you if it looks like a scam, an ad, or a normal message, and what to do next.",
       label:"Paste the message here",ph:"Example: Your bKash account will be closed. Click the link to verify now.",
       tryit:"Try an example:",deep:"Look deeper at short links (Cyber will contact the short link's service, never the website behind it).",
-      check:"Check message",checking:"Checking...",clear:"Clear",listen:"Listen to Cyber",stop:"Stop",
+      check:"Check message",checking:"Cyber is reading...",clear:"Clear",listen:"Listen to Cyber",stop:"Stop",
       empty:"Paste a message first.",fail:"Could not reach the ScamShield server. Is it running?",
       v:{suspicious:"Looks like a scam",careful:"Be careful","not sure":"Cyber is not sure",legit:"Looks normal",promo:"Looks like an ad"},
-      links:"Links in this message",nolinks:"No links found.",why:"How sure is the model?",words:"Words that mattered",
-      up:"Pushed towards scam",down:"Pushed towards safe",novoice:"This device has no voice for this language. Try Microsoft Edge or Chrome, or switch to English.",
+      risk:"Scam risk",marked:"What Cyber noticed in your message",lg_hot:"pushes towards scam",lg_cool:"pushes towards safe",
+      links:"Links in this message",nolinks:"No links found.",why:"How sure is the model?",
+      novoice:"This device has no voice for this language. Try Microsoft Edge or Chrome, or switch to English.",
+      tips:["Never share your OTP or PIN, not even with someone who says they are from bKash.","A real company never needs you to click a link to keep your account open.","A prize for a contest you never entered? That is bait.","Urgent and scary? Slow down. Scammers rush you on purpose."],
       foot:"ScamShield is a helper, not a guarantee. It can be wrong in both directions. When money or passwords are involved, confirm through the official app or hotline. Link safety lookups use the Google Safe Browsing service when enabled; advisory provided by Google.",
       ex:["Your bKash account is suspended. Verify here: http://bkash-help.com/verify","20% off all shoes this weekend at Daraz!","Your OTP is 482913. Do not share it with anyone."]},
   bn:{hero:"অদ্ভুত মেসেজ পেয়েছেন? সাইবারকে জিজ্ঞেস করুন।",sub:"এসএমএস, হোয়াটসঅ্যাপ বা ইমেইলের লেখা পেস্ট করুন। সাইবার বলবে এটা প্রতারণা, বিজ্ঞাপন নাকি সাধারণ মেসেজ, আর এখন কী করবেন।",
       label:"মেসেজটি এখানে পেস্ট করুন",ph:"যেমন: আপনার বিকাশ অ্যাকাউন্ট বন্ধ হয়ে যাবে। এখনই লিংকে ক্লিক করে ভেরিফাই করুন।",
       tryit:"উদাহরণ দেখুন:",deep:"শর্ট লিংক আরও ভালোভাবে দেখুন (সাইবার শুধু শর্ট লিংকের সেবাটির সঙ্গে যোগাযোগ করবে, আসল ওয়েবসাইটে কখনো ঢুকবে না)।",
-      check:"মেসেজ যাচাই করুন",checking:"যাচাই হচ্ছে...",clear:"মুছুন",listen:"সাইবারের কথা শুনুন",stop:"থামুন",
+      check:"মেসেজ যাচাই করুন",checking:"সাইবার পড়ছে...",clear:"মুছুন",listen:"সাইবারের কথা শুনুন",stop:"থামুন",
       empty:"আগে একটি মেসেজ পেস্ট করুন।",fail:"ScamShield সার্ভারের সঙ্গে যোগাযোগ করা যাচ্ছে না। সার্ভার চালু আছে তো?",
       v:{suspicious:"প্রতারণা মনে হচ্ছে",careful:"সাবধান থাকুন","not sure":"সাইবার নিশ্চিত নয়",legit:"স্বাভাবিক মনে হচ্ছে",promo:"বিজ্ঞাপন মনে হচ্ছে"},
-      links:"মেসেজের লিংক",nolinks:"কোনো লিংক পাওয়া যায়নি।",why:"মডেল কতটা নিশ্চিত?",words:"যেসব শব্দ প্রভাব ফেলেছে",
-      up:"প্রতারণার দিকে টেনেছে",down:"নিরাপদের দিকে টেনেছে",novoice:"এই ডিভাইসে বাংলা ভয়েস নেই। Microsoft Edge বা Chrome ব্যবহার করুন।",
+      risk:"প্রতারণার ঝুঁকি",marked:"আপনার মেসেজে সাইবার যা লক্ষ করেছে",lg_hot:"প্রতারণার দিকে টানে",lg_cool:"নিরাপদের দিকে টানে",
+      links:"মেসেজের লিংক",nolinks:"কোনো লিংক পাওয়া যায়নি।",why:"মডেল কতটা নিশ্চিত?",
+      novoice:"এই ডিভাইসে বাংলা ভয়েস নেই। Microsoft Edge বা Chrome ব্যবহার করুন।",
+      tips:["OTP বা PIN কাউকে বলবেন না, বিকাশের লোক বললেও না।","আসল কোম্পানি অ্যাকাউন্ট চালু রাখতে লিংকে ক্লিক করতে বলে না।","যে প্রতিযোগিতায় নামেননি, তার পুরস্কার? এটা ফাঁদ।","তাড়াহুড়ো আর ভয় দেখানো? থামুন। প্রতারকরা ইচ্ছা করেই তাড়া দেয়।"],
       foot:"ScamShield একটি সহায়ক, নিশ্চয়তা নয়। দুই দিকেই ভুল হতে পারে। টাকা বা পাসওয়ার্ডের ব্যাপার হলে অফিসিয়াল অ্যাপ বা হটলাইনে নিশ্চিত হয়ে নিন। চালু থাকলে লিংক যাচাইয়ে Google Safe Browsing ব্যবহার হয়; পরামর্শ সরবরাহ করেছে Google।",
       ex:["আপনার বিকাশ অ্যাকাউন্ট বন্ধ হয়ে যাবে। এখনই ভেরিফাই করুন: http://bkash-help.com/verify","এই সপ্তাহান্তে দারাজে সব জুতায় ২০% ছাড়!","আপনার OTP 482913। কাউকে বলবেন না।"]},
   bnl:{hero:"Ajib message peyechen? Cyber ke jiggesh korun.",sub:"SMS, WhatsApp ba email-er lekha paste korun. Cyber bolbe eta scam, ad naki normal message, ar ekhon ki korben.",
       label:"Message ta ekhane paste korun",ph:"Jemon: Apnar bKash account bondho hoye jabe. Ekhoni link e click kore verify korun.",
       tryit:"Example dekhun:",deep:"Short link ar bhalo kore dekhun (Cyber shudhu short link-er service er sathe jogajog korbe, asol website e kokhono dhukbe na).",
-      check:"Message check korun",checking:"Check hocche...",clear:"Muchun",listen:"Cyber-er kotha shunun",stop:"Thamun",
+      check:"Message check korun",checking:"Cyber porche...",clear:"Muchun",listen:"Cyber-er kotha shunun",stop:"Thamun",
       empty:"Age ekta message paste korun.",fail:"ScamShield server e jogajog hocche na. Server chalu ache to?",
       v:{suspicious:"Scam moune hocche",careful:"Savdhan thakun","not sure":"Cyber nishchit noy",legit:"Normal moune hocche",promo:"Ad moune hocche"},
-      links:"Message-er link",nolinks:"Kono link paoa jayni.",why:"Model koto ta nishchit?",words:"Je shobdo gulo prabhav felechhe",
-      up:"Scam-er dike tenechhe",down:"Nirapod-er dike tenechhe",novoice:"Ei device e Bangla voice nei. Microsoft Edge ba Chrome use korun.",
+      risk:"Scam-er jhunki",marked:"Apnar message e Cyber ja lokkho korechhe",lg_hot:"scam-er dike tane",lg_cool:"nirapod-er dike tane",
+      links:"Message-er link",nolinks:"Kono link paoa jayni.",why:"Model koto ta nishchit?",
+      novoice:"Ei device e Bangla voice nei. Microsoft Edge ba Chrome use korun.",
+      tips:["OTP ba PIN kauke bolben na, bKash-er lok bolleo na.","Asol company account chalu rakhte link e click korte bole na.","Je contest e nameni, tar prize? Eta fad.","Tarahuro ar bhoy dekhano? Thamun. Protarokra ichchha kore tara dey."],
       foot:"ScamShield ekta sahayok, guarantee noy. Duidik e bhul hote pare. Taka ba password-er byapar hole official app ba hotline e confirm korun. Chalu thakle link check e Google Safe Browsing use hoy; advisory provided by Google.",
       ex:["Apnar bKash account bondho hoye jabe. Ekhoni verify korun: http://bkash-help.com/verify","Ei weekend e Daraz e sob juta te 20% discount!","Apnar OTP 482913. Kauke bolben na."]}
 };
-/* verdict -> colour and the icon drawn inside the stamp. Colour carries the meaning, so it is kept in one place. */
+/* verdict -> colours (two for the gradient), mood for Cyber's face, icon in the stamp */
+const WARN='<path d="M12 3 2 21h20zM12 10v5M12 18v.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>';
 const VERDICT = {
-  suspicious:{c:"--danger",light:false,icon:'<path d="M12 3 2 21h20zM12 10v5M12 18v.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'},
-  careful:{c:"--caution",light:true,icon:'<path d="M12 3 2 21h20zM12 10v5M12 18v.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'},
-  legit:{c:"--safe",light:false,icon:'<path d="m4 12 5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'},
-  promo:{c:"--promo",light:false,icon:'<path d="M3 10v4h4l7 4V6L7 10zM17 9a4 4 0 0 1 0 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'},
-  "not sure":{c:"--neutral",light:false,icon:'<path d="M9 9a3 3 0 1 1 4 2.8c-.7.4-1 .9-1 1.7M12 18v.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>'}
+  suspicious:{c:"#E5383B",c2:"#FF6A3D",light:false,mood:"alarm",icon:WARN},
+  careful:{c:"#F5A300",c2:"#FFD23F",light:true,mood:"worry",icon:WARN},
+  legit:{c:"#13A25A",c2:"#2BD9A0",light:false,mood:"happy",confetti:["#2BD9A0","#13A25A","#FFC93C","#19D3F3","#fff"],icon:'<path d="m4 12 5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'},
+  promo:{c:"#0098C4",c2:"#7A4DFF",light:false,mood:"happy",confetti:["#19D3F3","#FF4FA3","#FFC93C","#4B3DFF","#fff"],icon:'<path d="M3 10v4h4l7 4V6L7 10zM17 9a4 4 0 0 1 0 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'},
+  "not sure":{c:"#6B6F99",c2:"#9A8CFF",light:false,mood:"hmm",icon:'<path d="M9 9a3 3 0 1 1 4 2.8c-.7.4-1 .9-1 1.7M12 18v.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>'}
 };
-const CYBER_SVG='<svg viewBox="0 0 200 220" aria-hidden="true"><path d="M100 8 180 38v68c0 56-36 92-80 106C56 198 20 162 20 106V38z" fill="#4B3DFF" stroke="#15173F" stroke-width="8"/><rect x="48" y="62" width="104" height="72" rx="22" fill="#fff" stroke="#15173F" stroke-width="7"/><circle cx="78" cy="98" r="12" fill="#15173F"/><circle cx="122" cy="98" r="12" fill="#15173F"/></svg>';
+/* Cyber the robot. Face parts: .pupils moves with the cursor, .dart wiggles while scanning, .blink closes the eyes.
+   Only one mouth is visible at a time, chosen by data-mood in the CSS. This markup is a constant, never user text. */
+const MASCOT='<svg class="mascot" data-mood="idle" viewBox="0 0 200 220" aria-hidden="true">'+
+ '<path class="shell" d="M100 8 180 38v68c0 56-36 92-80 106C56 198 20 162 20 106V38z" stroke="#15173F" stroke-width="7" stroke-linejoin="round"/>'+
+ '<rect x="48" y="62" width="104" height="72" rx="22" fill="#fff" stroke="#15173F" stroke-width="6"/>'+
+ '<g class="pupils"><g class="dart"><g class="blink"><circle cx="78" cy="98" r="11" fill="#15173F"/><circle cx="122" cy="98" r="11" fill="#15173F"/><circle cx="82" cy="94" r="3.5" fill="#fff"/><circle cx="126" cy="94" r="3.5" fill="#fff"/></g></g></g>'+
+ '<path d="M100 62V44" stroke="#15173F" stroke-width="6" stroke-linecap="round"/><circle class="bulb" cx="100" cy="40" r="9" stroke="#15173F" stroke-width="5"/>'+
+ '<path class="m m-idle" d="M84 156h32" stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none"/>'+
+ '<path class="m m-happy" d="M76 150q24 26 48 0" stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none"/>'+
+ '<path class="m m-alarm" d="M86 168q14-26 28 0z" fill="#fff" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>'+
+ '<path class="m m-worry" d="M78 164q22-18 44 0" stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none"/>'+
+ '<path class="m m-hmm" d="M80 160h40" stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none"/></svg>';
 
-/* ---------- 2. Small helpers ---------- */
+/* ============ 2. Helpers ============ */
 const $ = id => document.getElementById(id);
-/* el() builds elements with textContent, never innerHTML, so text from a scam message
-   (or from the server) can never run as code on this page. */
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;   // true if the person asked for less motion
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+/* el() builds elements with textContent, never innerHTML, so text from a scam message or the server cannot run as code. */
 function el(tag, attrs, ...kids){
   const n = document.createElement(tag);
-  for (const [k,v] of Object.entries(attrs||{})) k==="class" ? n.className=v : n.setAttribute(k,v);
+  for (const [k,v] of Object.entries(attrs||{})) if (v!==null) k==="class" ? n.className=v : n.setAttribute(k,v);
   for (const k of kids) n.append(k);
   return n;
 }
-let lang = "en", last = null;
+let lang="en", last=null, runId=0;
 const t = () => UI[lang];
 
-/* ---------- 3. Translating the static page ---------- */
+/* ============ 3. Cyber's moods and eyes ============ */
+function setMood(mood){ document.querySelectorAll(".mascot:not(.rover)").forEach(m=>m.dataset.mood=mood); }
+function actOut(){ if(RM) return; document.querySelectorAll(".mascot:not(.rover)").forEach(m=>{m.classList.remove("act");void m.getBoundingClientRect();m.classList.add("act");}); }
+// pupils follow the pointer: work out the direction from the robot's face to the cursor, move up to 7 units that way
+addEventListener("pointermove", e=>{
+  if(RM) return;
+  document.querySelectorAll(".mascot").forEach(m=>{
+    const r=m.getBoundingClientRect(), dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height*.45);
+    const d=Math.hypot(dx,dy)||1, k=Math.min(7,d/25);
+    m.querySelector(".pupils").setAttribute("transform",`translate(${dx/d*k} ${dy/d*k})`);
+  });
+});
+let tipIndex=-1;
+function nextTip(){
+  const tips=t().tips; tipIndex=(tipIndex+1)%tips.length;
+  const box=$("tip"); box.textContent=tips[tipIndex]; box.classList.remove("pop"); void box.offsetWidth; box.classList.add("pop");
+}
+$("heroCyber").innerHTML=MASCOT;
+$("heroCyber").setAttribute("aria-label","Cyber. Tap for a safety tip.");
+$("heroCyber").onclick=()=>{ nextTip(); setMood("happy"); actOut(); setTimeout(()=>setMood(last?VERDICT[last.verdict]?.mood||"hmm":"idle"),1200); };
+
+/* ============ 4. Static text ============ */
 function applyLang(){
-  const u = t();
+  const u=t();
   document.documentElement.lang = lang==="bn" ? "bn" : "en";
   $("t-hero").textContent=u.hero; $("t-sub").textContent=u.sub; $("t-label").textContent=u.label;
   $("msg").placeholder=u.ph; $("t-deep").textContent=u.deep; $("go").textContent=u.check;
   $("clear").textContent=u.clear; $("t-foot").textContent=u.foot; $("t-try").textContent=u.tryit;
   document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.l===lang));
   const chips=$("chips"); chips.querySelectorAll(".chip").forEach(c=>c.remove());
-  u.ex.forEach((text,i)=>{ const b=el("button",{class:"chip",type:"button"},["A","B","C"][i]+": "+text.slice(0,26)+"..."); b.onclick=()=>{$("msg").value=text; $("msg").focus();}; chips.append(b); });
-  if(last) check();   // re-ask so Cyber answers in the new language
+  u.ex.forEach((text,i)=>{ const b=el("button",{class:"chip",type:"button"},["A","B","C"][i]+": "+text.slice(0,26)+"..."); b.onclick=()=>{$("msg").value=text;$("msg").focus();}; chips.append(b); });
+  tipIndex=-1; nextTip(); labelRoam();
+  if(last) check();
 }
 document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{lang=b.dataset.l; applyLang();});
-$("clear").onclick=()=>{$("msg").value="";$("result").replaceChildren();last=null;speechSynthesis&&speechSynthesis.cancel();};
+$("clear").onclick=()=>{ $("msg").value=""; $("result").replaceChildren(); last=null; runId++; document.body.classList.remove("has-verdict"); setMood("idle"); window.speechSynthesis&&speechSynthesis.cancel(); rover.release(); };
 
-/* ---------- 4. Ask the API ---------- */
+/* ============ 5. Ask the API (with a short "scanning" show) ============ */
 async function check(ev){
   if(ev) ev.preventDefault();
   const text=$("msg").value.trim(), err=$("err"); err.textContent="";
   if(!text){err.textContent=t().empty;return;}
-  const go=$("go"); go.disabled=true; go.textContent=t().checking;
+  const go=$("go"), field=$("field"), my=++runId;
+  go.disabled=true; go.textContent=t().checking;
+  field.style.setProperty("--h",($("msg").offsetHeight-56)+"px"); field.classList.add("scanning");
+  setMood("scan"); rover.hold("search");
   try{
-    const r=await fetch("/check",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({text,look_deeper:$("deep").checked,lang})});
+    // wait for BOTH the server and a minimum scan time, so the animation is seen even when the answer is instant
+    const [r] = await Promise.all([
+      fetch("/check",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,look_deeper:$("deep").checked,lang})}),
+      sleep(RM?0:1300)
+    ]);
     if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error(j.detail||r.statusText);}
-    last=await r.json(); render(last);
+    const data=await r.json();
+    if(my!==runId) return;
+    last=data; last._text=text; render(data,text,my);
   }catch(e){
+    setMood("idle"); rover.release();
     err.textContent = e instanceof TypeError ? t().fail : String(e.message||e);
-  }finally{ go.disabled=false; go.textContent=t().check; }
+  }finally{ field.classList.remove("scanning"); go.disabled=false; go.textContent=t().check; }
 }
 $("form").addEventListener("submit",check);
 
-/* ---------- 5. Draw the answer ---------- */
-function render(d){
+/* ============ 6. Effects ============ */
+function confetti(colors){
+  if(RM) return;
+  const c=$("fx"), x=c.getContext("2d"); c.width=innerWidth; c.height=innerHeight;
+  const ps=Array.from({length:120},()=>({x:innerWidth/2+(Math.random()-.5)*240,y:innerHeight*.4,vx:(Math.random()-.5)*15,vy:-Math.random()*14-4,s:7+Math.random()*7,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:colors[Math.random()*colors.length|0]}));
+  let f=0;
+  (function tick(){
+    x.clearRect(0,0,c.width,c.height);
+    ps.forEach(p=>{p.vy+=.4;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/3,p.s,p.s*.6);x.restore();});
+    if(++f<120) requestAnimationFrame(tick); else x.clearRect(0,0,c.width,c.height);
+  })();
+}
+function countTo(node,target,ms){
+  if(RM){node.textContent=target+"%";return;}
+  const start=performance.now();
+  (function step(now){const p=Math.min(1,(now-start)/ms);node.textContent=Math.round(target*(1-Math.pow(1-p,3)))+"%";if(p<1)requestAnimationFrame(step);})(start);
+}
+/* types text into a paragraph, one visible character (grapheme) at a time; Bangla letters stay whole */
+async function typeInto(p,text,my){
+  if(RM||!window.Intl||!Intl.Segmenter){p.textContent=text;return;}
+  const parts=Array.from(new Intl.Segmenter(lang==="bn"?"bn":"en",{granularity:"grapheme"}).segment(text),s=>s.segment);
+  let shown="";
+  for(const ch of parts){ if(my!==runId) return; shown+=ch; p.textContent=shown; await sleep(ch===" "?4:11); }
+}
+function gaugeSVG(){
+  return '<svg viewBox="0 0 200 112" aria-hidden="true"><defs><linearGradient id="gg" x1="0" x2="1"><stop offset="0" stop-color="#2BD9A0"/><stop offset=".5" stop-color="#FFD23F"/><stop offset="1" stop-color="#fff"/></linearGradient></defs>'+
+   '<path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="#ffffff55" stroke-width="18" stroke-linecap="round"/>'+
+   '<path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="url(#gg)" stroke-width="18" stroke-linecap="round"/>'+
+   '<g class="needle"><path d="M100 100 100 30" stroke="#15173F" stroke-width="6" stroke-linecap="round"/></g><circle cx="100" cy="100" r="10" fill="#15173F"/></svg>';
+}
+
+/* ============ 7. Draw the answer ============ */
+function render(d,text,my){
   const u=t(), key=VERDICT[d.verdict]?d.verdict:"not sure", V=VERDICT[key];
-  speechSynthesis&&speechSynthesis.cancel();
+  window.speechSynthesis&&speechSynthesis.cancel();
   const out=$("result"); out.replaceChildren();
+  document.body.classList.add("has-verdict");
+  document.documentElement.style.setProperty("--v",V.c); document.documentElement.style.setProperty("--v2",V.c2);
 
-  // the big coloured verdict card
-  const stamp=el("div",{class:"stamp land"}); stamp.innerHTML='<svg viewBox="0 0 24 24">'+V.icon+'</svg>'; // icon markup is ours (constant above), not user text
-  const card=el("div",{class:"verdict"+(V.light?" light":"")}, stamp, el("div",{}, el("h2",{}, u.v[key])));
-  card.style.setProperty("--v",`var(${V.c})`); out.append(card);
+  // big coloured verdict card: stamp, title, risk gauge
+  const stamp=el("div",{class:"stamp land"}); stamp.innerHTML='<svg viewBox="0 0 24 24">'+V.icon+'</svg>';
+  const risk=Math.max(0,Math.min(1,(d.probabilities||{}).suspicious||0)), pct=Math.round(risk*100);
+  const pctEl=el("div",{class:"pct"},"0%");
+  const gauge=el("div",{class:"gauge"}); gauge.insertAdjacentHTML("beforeend",gaugeSVG());
+  gauge.append(pctEl,el("div",{class:"cap"},u.risk));
+  const card=el("div",{class:"verdict"+(V.light?" light":"")}, stamp, el("div",{},el("h2",{},u.v[key])), gauge);
+  out.append(card);
+  const needle=gauge.querySelector(".needle");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ needle.style.transform=`rotate(${-90+risk*180}deg)`; countTo(pctEl,pct,1200); }));
 
-  // Cyber's spoken-style explanation
-  const cy=d.cyber||{}, bubble=el("div",{class:"bubble"});
-  String(cy.text||"").split(/\n+/).filter(Boolean).forEach(p=>bubble.append(el("p",{},p)));
-  const cyber=el("div",{class:"cyber"});
-  cyber.insertAdjacentHTML("beforeend",CYBER_SVG);   // constant markup
-  if("speechSynthesis" in window && cy.speech_text){
-    const btn=el("button",{class:"listen",type:"button"},"🔊 "+u.listen);
-    btn.onclick=()=>speak(cy.speech_text,cy.speech_lang||"en-US",btn,note);
-    bubble.append(btn);
-  }
-  const note=el("div",{class:"note"}); bubble.append(note);
+  // Cyber reacts: face, bounce/shake, flash or confetti
+  setMood(V.mood); actOut(); rover.react(key);
+  if(key==="suspicious"&&!RM){ card.classList.add("shake"); const f=$("flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go"); }
+  if(V.confetti) confetti(V.confetti);
+
+  // Cyber's explanation, typed out
+  const cy=d.cyber||{}, bubble=el("div",{class:"bubble"}), cyber=el("div",{class:"cyber"});
+  cyber.insertAdjacentHTML("beforeend",MASCOT); cyber.querySelector(".mascot").dataset.mood=V.mood;
+  const paras=String(cy.text||"").split(/\n+/).filter(Boolean).map(()=>bubble.appendChild(el("p")));
   cyber.append(bubble); out.append(cyber);
+  const note=el("div",{class:"note"});
+  (async()=>{
+    const lines=String(cy.text||"").split(/\n+/).filter(Boolean);
+    for(let i=0;i<lines.length;i++) await typeInto(paras[i],lines[i],my);
+    if(my!==runId) return;
+    if("speechSynthesis" in window && cy.speech_text){
+      const btn=el("button",{class:"listen",type:"button"},"🔊 "+u.listen);
+      btn.onclick=()=>speak(cy.speech_text,cy.speech_lang||"en-US",btn,note);
+      bubble.append(btn);
+    }
+    bubble.append(note);
+  })();
+
+  // the person's own message, marked up
+  out.append(markedMessage(d,text,u));
 
   // links
   const links=d.links||[];
@@ -263,27 +582,39 @@ function render(d){
   });
   out.append(ld);
 
-  // probabilities
-  const pr=d.probabilities||{}, pd=el("details",{},el("summary",{},u.why));
-  Object.entries(pr).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
-    const pct=Math.round(v*100);
-    pd.append(el("div",{class:"bar"},el("span",{},k),el("i",{},Object.assign(el("b"),{style:"width:"+pct+"%"})),el("span",{},pct+"%")));
+  // model confidence bars grow in
+  const pd=el("details",{},el("summary",{},u.why)), bars=[];
+  Object.entries(d.probabilities||{}).sort((a,b)=>b[1]-a[1]).forEach(([k,v],i)=>{
+    const fill=el("b"); fill.dataset.w=Math.round(v*100); fill.style.transitionDelay=(i*120)+"ms"; bars.push(fill);
+    pd.append(el("div",{class:"bar"},el("span",{},k),el("i",{},fill),el("span",{},Math.round(v*100)+"%")));
   });
+  pd.addEventListener("toggle",()=>{ if(pd.open) bars.forEach(b=>b.style.width=b.dataset.w+"%"); });
   out.append(pd);
 
-  // words that mattered (server may send [word, number] pairs or objects)
-  const norm=a=>(a||[]).map(x=>Array.isArray(x)?x[0]:(x.word||x[0]||String(x)));
-  const up=norm(d.words_raising), down=norm(d.words_lowering);
-  if(up.length||down.length){
-    const wd=el("details",{},el("summary",{},u.words)), box=el("div",{class:"words"});
-    if(up.length){box.append(el("div",{class:"note"},u.up));up.forEach(w=>box.append(el("span",{class:"up"},w)));}
-    if(down.length){box.append(el("div",{class:"note"},u.down));down.forEach(w=>box.append(el("span",{class:"down"},w)));}
-    wd.append(box); out.append(wd);
-  }
-  card.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"nearest"});
+  card.scrollIntoView({behavior:RM?"auto":"smooth",block:"nearest"});
 }
 
-/* ---------- 6. Voice (the browser's built-in speech, nothing is uploaded) ---------- */
+/* Re-draws the message with risky words in red, safe-leaning words in green, and links coloured by their level.
+   Words come from the engine's leave-one-word-out test (words_raising / words_lowering). */
+function markedMessage(d,text,u){
+  const norm=a=>new Set((a||[]).map(x=>String(Array.isArray(x)?x[0]:(x.word||x[0]||x)).normalize("NFC").toLowerCase()));
+  const hot=norm(d.words_raising), cool=norm(d.words_lowering), links=d.links||[];
+  const box=el("div",{class:"marked"});
+  text.split(/(\s+)/).forEach(tok=>{
+    if(!tok.trim()){ box.append(tok); return; }
+    const core=tok.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,"").normalize("NFC").toLowerCase();
+    const link=links.find(l=>tok.includes(l.url)||l.url.includes(core)&&core.length>6);
+    if(link) box.append(el("mark",{class:link.level||"check"},tok));
+    else if(hot.has(core)) box.append(el("mark",{class:"hot"},tok));
+    else if(cool.has(core)) box.append(el("mark",{class:"cool"},tok));
+    else box.append(tok);
+  });
+  const det=el("details",{open:""},el("summary",{},u.marked),box,
+    el("div",{class:"legend"},"🟥 "+u.lg_hot+"   🟩 "+u.lg_cool));
+  return det;
+}
+
+/* ============ 8. Voice (the browser's built-in speech; nothing is uploaded) ============ */
 function speak(text,code,btn,note){
   const s=speechSynthesis;
   if(s.speaking){s.cancel();btn.textContent="🔊 "+t().listen;return;}
@@ -293,7 +624,206 @@ function speak(text,code,btn,note){
   u.onend=u.onerror=()=>{btn.textContent="🔊 "+t().listen;};
   btn.textContent="⏹ "+t().stop; s.speak(u);
 }
-if("speechSynthesis" in window) speechSynthesis.getVoices();  // some browsers load voices lazily
+if("speechSynthesis" in window) speechSynthesis.getVoices();
+
+/* ============ 9. Cyber roams the page: a full-body character with arms and legs ============ */
+const ROAM_LABEL={en:"Cyber roams",bn:"সাইবার ঘুরছে",bnl:"Cyber ghurche"};
+function labelRoam(){ $("roamBtn").textContent="🏃 "+ROAM_LABEL[lang]; }
+
+/* The body is the same shield-robot as above (drawn at half size). Arms and legs are two-part limbs:
+   upper part rotates at the shoulder/hip, lower part (nested inside) rotates at the elbow/knee.
+   Everything that changes between activities is done in CSS, driven by the data-act attribute. */
+const INNER=MASCOT.replace(/^<svg[^>]*>/,"").replace(/<\/svg>$/,"");
+const LIMB='stroke="#15173F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"';
+const HAND=(x,y)=>`<circle cx="${x}" cy="${y}" r="6.5" fill="#FFC93C" stroke="#15173F" stroke-width="3"/>`;
+const SHOE=x=>`<ellipse cx="${x+5}" cy="181" rx="12" ry="6" fill="#FF4FA3" stroke="#15173F" stroke-width="3"/>`;
+const leg=(cls,x)=>`<g class="th${cls}"><path d="M${x} 120V150" ${LIMB}/><g class="sh${cls}"><path d="M${x} 150V176" ${LIMB}/>${SHOE(x)}</g></g>`;
+const ARMS=
+ `<g class="upL"><path d="M44 84 36 106" ${LIMB}/><g class="foreL"><path d="M36 106V130" ${LIMB}/>${HAND(36,133)}</g></g>`+
+ `<g class="upR"><path d="M116 84 124 106" ${LIMB}/><g class="foreR"><path d="M124 106V130" ${LIMB}/>`+
+   // props held in the right hand: a can of juice, a magnifying glass, a stop sign
+   '<g class="p-can"><rect x="117" y="128" width="14" height="26" rx="3" fill="#FF4FA3" stroke="#15173F" stroke-width="3"/><rect x="117" y="136" width="14" height="6" fill="#fff"/><path d="M127 128l3-8" stroke="#15173F" stroke-width="3" stroke-linecap="round"/></g>'+
+   '<g class="p-mag"><path d="M124 134V156" stroke="#15173F" stroke-width="5" stroke-linecap="round"/><circle cx="124" cy="168" r="12" fill="#CFF6FF" fill-opacity=".8" stroke="#15173F" stroke-width="4"/></g>'+
+   '<g class="p-sign"><path d="M124 134V162" stroke="#15173F" stroke-width="5" stroke-linecap="round"/><polygon points="124,160 136,165 141,177 136,189 124,194 112,189 107,177 112,165" fill="#E5383B" stroke="#15173F" stroke-width="3"/><text x="124" y="185" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="22" fill="#fff">!</text></g>'+
+   '<g class="p-phone"><rect x="117" y="121" width="13" height="23" rx="3" fill="#15173F"/><rect x="119" y="124" width="9" height="16" rx="1.5" fill="#7FE7FF"/></g>'+
+   '<circle class="p-flash" cx="124" cy="112" r="17" fill="#fff"/>'+
+   `${HAND(124,133)}</g></g>`;
+const BOOK='<g class="p-book"><path d="M55 97 80 104 105 97V123L80 129 55 123z" fill="#FF4FA3" stroke="#15173F" stroke-width="3" stroke-linejoin="round"/><path d="M59 97 80 102V125L59 120z" fill="#fff" stroke="#15173F" stroke-width="2"/><g class="pageflip"><path d="M101 97 80 102V125L101 120z" fill="#fff" stroke="#15173F" stroke-width="2"/><path d="M86 108h10M86 113h10M86 118h8" stroke="#9AA0D0" stroke-width="2" stroke-linecap="round"/></g><path d="M64 108h10M64 113h10M64 118h8" stroke="#9AA0D0" stroke-width="2" stroke-linecap="round"/></g>';
+const WHEEL=(c,cx)=>`<g class="wheel ${c}"><circle cx="${cx}" cy="166" r="17" fill="#15173F"/><circle cx="${cx}" cy="166" r="8" fill="#fff"/><path d="M${cx} 158V174M${cx-8} 166H${cx+8}" stroke="#15173F" stroke-width="3"/></g>`;
+const CAR='<g class="carg"><g class="carbody"><rect x="6" y="116" width="148" height="46" rx="16" fill="#19D3F3" stroke="#15173F" stroke-width="4"/><rect x="8" y="138" width="144" height="8" fill="#fff" opacity=".55"/><path d="M104 116 114 98H124V116z" fill="#CFF6FF" stroke="#15173F" stroke-width="3" stroke-linejoin="round"/><circle cx="150" cy="130" r="5" fill="#FFC93C" stroke="#15173F" stroke-width="2.5"/></g>'+WHEEL("w1",38)+WHEEL("w2",124)+'</g>';
+const ROVER='<svg class="mascot rover" data-mood="happy" data-act="walk" viewBox="0 0 160 236" role="img" aria-label="Cyber">'+
+ '<g transform="translate(0 40)">'+
+ '<ellipse cx="80" cy="188" rx="36" ry="5" fill="#15173F" opacity=".16"/>'+
+ '<g class="ballY"><g class="p-ball"><circle cx="112" cy="182" r="9" fill="#fff" stroke="#15173F" stroke-width="3"/><path d="M112 176l5 4-2 6h-6l-2-6z" fill="#15173F"/></g></g>'+
+ '<g class="fig">'+ leg("R",92)+leg("L",68)+
+ '<g transform="translate(30 20) scale(.5)">'+INNER+
+   '<g class="sg"><rect x="54" y="82" width="48" height="32" rx="11" fill="#15173F"/><rect x="98" y="82" width="48" height="32" rx="11" fill="#15173F"/><path d="M62 92l12-2M106 92l12-2" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/></g>'+
+   '<g class="closed"><path d="M64 98q14 12 28 0M108 98q14 12 28 0" stroke="#15173F" stroke-width="6" stroke-linecap="round" fill="#fff"/></g>'+
+ '</g>'+BOOK+
+ ARMS+
+ '</g>'+CAR+'</g></svg>';
+
+const rover=(()=>{
+  const wrap=$("rover"), ballEl=$("fball"), discEl=$("fdisc");
+  if(RM){ wrap.hidden=true; ballEl.remove(); discEl.remove(); $("roamBtn").hidden=true; return {hold(){},release(){},react(){}}; }
+  wrap.innerHTML='<div class="jumper"><div class="flip">'+ROVER+'</div></div><div class="say"></div>';
+  const svg=wrap.querySelector("svg"), flip=wrap.querySelector(".flip"), jumper=wrap.querySelector(".jumper"), say=wrap.querySelector(".say");
+  const content=document.querySelector(".wrap");          // the column that holds the ScamShield tool
+  const MOOD={walk:"happy",run:"happy",kick:"happy",drink:"happy",dance:"happy",nap:"idle",wave:"happy",read:"idle",phone:"happy",selfie:"happy",frisbee:"happy",drive:"happy",search:"scan",alert:"alarm",careful:"worry",cheer:"happy",shrug:"hmm",idle:"idle"};
+  const SAY={drink:"🥤",dance:"🎵",nap:"💤",wave:"👋",read:"📖",phone:"📱",selfie:"🤳",frisbee:"🥏",football:"⚽",drive:"🚗",search:"🔎",alert:"🚨",careful:"✋",cheer:"🎉",shrug:"🤔"};
+  /* What he does when he stops: [name, how likely, how long in ms]. Napping is rare on purpose. */
+  const MENU=[["football",3,14000],["frisbee",2,10000],["read",2,9000],["phone",2,8000],["selfie",2,7500],["drink",2,5500],["dance",2,6000],["wave",1,3000],["nap",.4,5000]];
+  let on=true; try{ on=localStorage.getItem("roam")!=="off"; }catch(e){}
+  let x=0,y=0, tx=0,ty=0, dir=1, act="walk", until=0, held=null, timer=0, last=performance.now();
+  let side=Math.random()<.5?"L":"R", zone={x0:0,x1:0,y0:0,y1:0}, strip=false, both=false;
+  let fb=null, fd=null, trip=null, recent=[];
+  const rand=(a,b)=>a+Math.random()*(b-a), clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const W=()=>wrap.offsetWidth, H=()=>wrap.offsetHeight;
+
+  /* Where may Cyber be? The ScamShield column is off limits, so he gets the empty space on its left and right.
+     With no space (phones, narrow windows) he hides. */
+  function layout(){
+    const r=content.getBoundingClientRect(), PAD=16, GAP=8;
+    const lw=r.left+PAD-GAP, rw=innerWidth-(r.right-PAD)-GAP, best=Math.max(lw,rw);
+    strip=best<80;
+    wrap.style.visibility=strip?"hidden":"visible";
+    const w=strip?Math.max(84,Math.min(130,innerWidth*.13)):Math.min(130,best);
+    wrap.style.width=w+"px";
+    const h=H(), y0=34, y1=Math.max(y0,innerHeight-h-2);
+    both=!strip&&lw>=w&&rw>=w;
+    if(strip){ zone={x0:0,x1:Math.max(0,innerWidth-w),y0:y1,y1}; return; }
+    if(side==="L"&&lw<w) side="R"; if(side==="R"&&rw<w) side="L";
+    zone = side==="L" ? {x0:0,x1:lw-w,y0,y1} : {x0:innerWidth-rw,x1:innerWidth-w,y0,y1};
+  }
+  const faceContent=()=>{ if(!strip) dir=side==="L"?1:-1; };
+  function sayNow(){ }   // the little emoji above his head is switched off
+  function set(a,keepSay){ act=a; svg.dataset.act=a; svg.dataset.mood=MOOD[a]||"happy"; if(!keepSay) sayNow(SAY[a]); }
+  function stopToys(){ fb=null; fd=null; ballEl.hidden=true; discEl.hidden=true; }
+
+  /* ---- walking somewhere new ---- */
+  function wander(){
+    for(let i=0;i<8;i++){ tx=rand(zone.x0,zone.x1); ty=rand(zone.y0,zone.y1); if(Math.hypot(tx-x,ty-y)>110) break; }
+    dir=tx>=x?1:-1; set(Math.random()<.3?"run":"walk");
+  }
+  /* ---- driving to the other side: out of the screen on this side, in from the far edge of the other side ---- */
+  function startTrip(){
+    trip={phase:"out",exit:side==="L"?-W()-60:innerWidth+60};
+    dir=trip.exit<x?-1:1; set("drive");
+  }
+  function driveStep(dt){
+    x+=dir*340*dt;
+    if(trip.phase==="out"){
+      if((dir<0&&x<=trip.exit)||(dir>0&&x>=trip.exit)){
+        side=side==="L"?"R":"L"; layout(); y=rand(zone.y0,zone.y1);
+        const fromRight=side==="R"; x=fromRight?innerWidth+60:-W()-60; dir=fromRight?-1:1;
+        trip={phase:"in",to:rand(zone.x0,zone.x1)};
+      }
+    }else if((dir<0&&x<=trip.to)||(dir>0&&x>=trip.to)){ x=trip.to; trip=null; startActivity(); }
+  }
+  /* ---- picking and starting an activity ---- */
+  function chooseActivity(){
+    const pool=MENU.filter(m=>!recent.includes(m[0])), tot=pool.reduce((s,m)=>s+m[1],0); let r=Math.random()*tot;
+    for(const m of pool) if((r-=m[1])<=0) return m; return pool[0];
+  }
+  function startActivity(name){
+    const m=name?MENU.find(q=>q[0]===name):chooseActivity(), now=performance.now();
+    recent.push(m[0]); if(recent.length>2) recent.shift();
+    faceContent(); until=now+m[2];
+    if(m[0]==="football") startFootball(now,m[2]); else if(m[0]==="frisbee") startFrisbee(now,m[2]); else set(m[0]);
+  }
+  function endActivity(){ stopToys(); trip=null; }
+
+  /* ---- football: the ball is real. He runs behind it, kicks it, and runs after it ---- */
+  function startFootball(now,dur){
+    const w=W(); fb={end:now+dur,bx:x+w*(dir>0?.9:.1),bh:0,vx:0,vh:0,kick:0,hit:false,kd:1,gy:y+H()*.96};
+    ballEl.hidden=false; set("run"); sayNow("⚽");
+  }
+  function footballStep(dt){
+    const b=fb, w=W();
+    b.vh-=900*dt; b.bh+=b.vh*dt;                                  // gravity
+    if(b.bh<=0){ b.bh=0; b.vh=Math.abs(b.vh)>80?-b.vh*.55:0; }    // bounce, then settle
+    b.bx+=b.vx*dt; if(b.bh===0&&b.vh===0) b.vx*=Math.pow(.35,dt); // rolling slows down
+    const lo=zone.x0+13, hi=zone.x1+w-13;                          // walls: the edge of the screen and the edge of the tool
+    if(b.bx<lo){ b.bx=lo; b.vx=Math.abs(b.vx)*.7; } if(b.bx>hi){ b.bx=hi; b.vx=-Math.abs(b.vx)*.7; }
+    ballEl.style.left=(b.bx-13)+"px"; ballEl.style.top=(b.gy-b.bh-26)+"px";
+    ballEl.classList.toggle("roll",Math.abs(b.vx)>15||b.bh>2);
+    if(b.kick>0){                                                  // mid-kick: the ball leaves his foot halfway through
+      b.kick-=dt;
+      if(b.hit&&b.kick<=.17){ b.hit=false; b.vx=b.kd*rand(240,400); b.vh=rand(240,380); }
+      if(b.kick<=0) set("run",true);
+      return;
+    }
+    const kd=(b.bx-zone.x0)<(zone.x1+w-b.bx)?1:-1;               // kick towards the roomier side
+    const want=clamp(b.bx-kd*w*.55-w/2,zone.x0,zone.x1), dx=want-x;
+    if(Math.abs(dx)>14){ if(act!=="run") set("run",true); dir=dx>0?1:-1; x=clamp(x+dir*210*dt,zone.x0,zone.x1); }
+    const atWall=x<=zone.x0+.5||x>=zone.x1-.5;
+    if((Math.abs(dx)<=14||atWall)&&Math.abs(b.bx-(x+w/2))<w*.9&&b.bh<26&&Math.abs(b.vx)<120){
+      b.kd=Math.abs(dx)<=14?kd:(b.bx>x+w/2?1:-1); dir=b.kd; set("kick",true); b.kick=.35; b.hit=true;
+    }
+  }
+  /* ---- frisbee: thrown out, curves, and comes back to his hands ---- */
+  function startFrisbee(now,dur){
+    const w=W(); let out=side==="L"?-1:1;
+    const room=d=>d>0?(zone.x1+w)-(x+w*.78):(x+w*.22)-zone.x0;
+    if(room(out)<50) out=-out;
+    fd={t0:now,end:now+dur,out,R:clamp(room(out)-10,40,150)};
+    dir=out; set("frisbee"); discEl.hidden=false;
+  }
+  function frisbeeStep(now){
+    const t=((now-fd.t0)%2600)/2600, p=Math.sin(Math.PI*t), w=W(), h=H();
+    const hx=x+w*(dir>0?.78:.22), hy=y+h*.5;
+    discEl.style.left=(hx+fd.out*fd.R*p-14)+"px";
+    discEl.style.top=(hy-26*p-8*Math.sin(2*Math.PI*t)-14)+"px";
+  }
+
+  function frame(now){
+    const dt=Math.min(.05,(now-last)/1000); last=now;
+    if(on){
+      if(trip) driveStep(dt);
+      else if(held&&held.goto){                                // running to a spot (the scam alarm)
+        const g=held.goto, dx=g.x-x, dy=g.y-y, d=Math.hypot(dx,dy), st=250*dt;
+        if(d<=st){ x=g.x; y=g.y; faceContent(); const p=held.then; held={}; set(p[0]); timer=setTimeout(release,p[1]); }
+        else{ x+=dx/d*st; y+=dy/d*st; if(Math.abs(dx)>2) dir=dx>0?1:-1; }
+      }else if(!held){
+        if(fb){ footballStep(dt); if(now>fb.end) next(); }
+        else if(act==="walk"||act==="run"){
+          const dx=tx-x, dy=ty-y, d=Math.hypot(dx,dy), st=(act==="run"?210:75)*dt;
+          if(d<=st){ x=tx; y=ty; layout(); startActivity(); } else{ x+=dx/d*st; y+=dy/d*st; }
+        }else if(now>until) next();
+      }
+      if(fd) frisbeeStep(now);
+      wrap.style.transform=`translate(${x}px,${y}px)`; flip.style.transform=`scaleX(${dir})`;
+    }
+    requestAnimationFrame(frame);
+  }
+  // an activity is over: sometimes drive to the other side, otherwise just walk somewhere else
+  function next(){ endActivity(); layout(); if(both&&Math.random()<.35) startTrip(); else wander(); }
+  function onScreen(){ layout(); x=clamp(x,zone.x0,zone.x1); y=clamp(y,zone.y0,zone.y1); }   // if he is off-screen (walking in, or mid car trip), bring him back before he reacts
+  function hold(a){ clearTimeout(timer); endActivity(); onScreen(); held={}; set(a); }
+  function release(){ clearTimeout(timer); held=null; endActivity(); layout(); wander(); }
+  function react(key){
+    if(!on) return; clearTimeout(timer); endActivity(); onScreen();
+    const plan={suspicious:["alert",5200,true],careful:["careful",3800],legit:["cheer",4200],promo:["cheer",4200],"not sure":["shrug",3000]}[key]||["shrug",3000];
+    if(plan[2]&&!strip){            // run to the empty space next to the verdict card, so the alarm is seen right there
+      const card=document.querySelector(".verdict"), cr=card?card.getBoundingClientRect():null;
+      const gy=cr?clamp(cr.top+cr.height/2-H()/2,zone.y0,zone.y1):zone.y0;
+      held={goto:{x:(zone.x0+zone.x1)/2,y:gy},then:plan}; set("run");
+    }else{ held={}; set(plan[0]); timer=setTimeout(release,plan[1]); }
+  }
+  svg.addEventListener("click",()=>{                         // poke him and he jumps
+    jumper.classList.remove("jump"); void jumper.offsetWidth; jumper.classList.add("jump");
+    sayNow("😄"); setTimeout(()=>{ sayNow(SAY[act]); },900);
+  });
+  const btn=$("roamBtn");
+  btn.setAttribute("aria-pressed",on); wrap.hidden=!on;
+  btn.onclick=()=>{ on=!on; btn.setAttribute("aria-pressed",on); wrap.hidden=!on; if(!on) stopToys(); try{localStorage.setItem("roam",on?"on":"off");}catch(e){} };
+  addEventListener("resize",()=>{ layout(); y=clamp(y,zone.y0,zone.y1); if(!trip) x=clamp(x,zone.x0-200,zone.x1+200); });
+  layout();
+  x=side==="L"?-W()-20:innerWidth+20; y=rand(zone.y0,zone.y1); tx=rand(zone.x0,zone.x1); ty=rand(zone.y0,zone.y1); dir=tx>=x?1:-1; set("walk");
+  requestAnimationFrame(frame);
+  window.__cyber={hold,release,react,go:n=>{clearTimeout(timer);held=null;endActivity();layout();startActivity(n);},trip:()=>{held=null;endActivity();layout();startTrip();},state:()=>({x,y,side,act,ball:fb&&{bx:fb.bx,bh:fb.bh}})};
+  return {hold,release,react};
+})();
 
 applyLang();
 </script>

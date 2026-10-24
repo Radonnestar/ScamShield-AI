@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="popup.css"><title>ScamShield</title></head>
+<body>
+  <h1>ScamShield</h1>
+  <section>
+    <button id="page" class="main">Check this website</button>
+    <div id="pageOut" class="out" hidden></div>
+  </section>
+  <section>
+    <label for="msg">Or paste a message</label>
+    <textarea id="msg" rows="4" placeholder="Paste an SMS or email here"></textarea>
+    <div class="row">
+      <select id="lang" aria-label="Language"><option value="en">English</option><option value="bn">বাংলা</option><option value="bnl">Banglish</option></select>
+      <button id="go" class="main">Ask Cyber</button>
+    </div>
+    <div id="msgOut" class="out" hidden></div>
+  </section>
+  <label class="auto"><input type="checkbox" id="auto"> Warn me about risky sites as I browse (sends each site's address, without the part after "?", to your ScamShield server)</label>
+  <p class="foot">A helper, not a guarantee. It can be wrong in both directions.</p>
+  <script src="popup.js"></script>
+</body></html>
