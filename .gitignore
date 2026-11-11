@@ -15,3 +15,4 @@ reality_results.csv
 holdout_final.csv
 .env
 .vscode/
+!model.joblib
