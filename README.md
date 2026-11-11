@@ -4,6 +4,8 @@ ScamShield checks a suspicious message or web link and tells you, in plain words
 
 Its helper, **Cyber**, is a friendly robot who explains the result, can read it aloud, and wanders around the web page while you use it.
 
+**Live demo:** https://scam-shield-ai-umber.vercel.app/ (copy a message on your phone, paste it, press Check).
+
 > **ScamShield is a helper, not a guarantee.** It can be wrong in both directions. When money, passwords or OTPs are involved, confirm through the official app or hotline. Never share an OTP or PIN, whatever the message says.
 
 ## What it does
@@ -50,7 +52,7 @@ Its helper, **Cyber**, is a friendly robot who explains the result, can read it 
 - **Link rules are hand-weighted guesses**, and the list of official brand domains must be verified against each company's own materials before anyone relies on it.
 - **Domain age is only a hint.** New honest sites exist, old sites get hacked, and some endings (such as `.bd`) may have no age data.
 - **Google Safe Browsing is free for non-commercial use only**, and its results must carry the credit "Advisory provided by Google".
-- **It is not ready for the public internet.** The API has simple rate limiting, but no accounts, no HTTPS setup and no abuse monitoring.
+- **It is an early public test, not a hardened service.** The live site runs on Vercel's free (non-commercial) plan. The API's rate limiter counts requests in memory, and Vercel runs many separate copies of the app, so it does not reliably limit anyone. There are no accounts and no abuse monitoring. Expect the first visit after a quiet period to be a few seconds slower while the model loads.
 
 ## Numbers (development figures, handle with care)
 
@@ -95,16 +97,28 @@ cd E:\Projects\ScamShield
 uvicorn api:app --reload
 ```
 
-Open http://127.0.0.1:8000/ for the website. `/docs` shows the API. The model file (`model.joblib`) and the datasets are not stored in this repository. Create them with `python run_all.py` after placing the datasets in `data/`.
+Open http://127.0.0.1:8000/ for the website. `/docs` shows the API. The datasets (`data/`) are not stored in this repository. To retrain the model, put the datasets in `data/` and run `python run_all.py`. The trained text model (`model.joblib`) is included so the hosted site can use it.
 
-To install the extension: open `edge://extensions` (or `chrome://extensions`), turn on Developer mode, choose **Load unpacked**, and pick the `extension` folder. The API must be running.
+To install the extension: open `edge://extensions` (or `chrome://extensions`), turn on Developer mode, choose **Load unpacked**, and pick the `extension` folder. By default it talks to the API on your own computer (`http://127.0.0.1:8000`), so the API must be running. Pointing it at the hosted site means changing the address in `extension/background.js` and `extension/popup.js` and the permission in `extension/manifest.json`.
 
 Optional Google Safe Browsing: set the environment variable `SAFE_BROWSING_KEY` to your own key. Without it that check is simply skipped.
 
+## Hosting (Vercel)
+
+The website and API are deployed together on [Vercel](https://vercel.com) as one FastAPI function.
+
+| File | Why it matters |
+| --- | --- |
+| `pyproject.toml` | Lists the exact package versions (the saved model needs the same scikit-learn version it was trained with), sets Python 3.14, and tells Vercel the app is `api:app` |
+| `.gitignore` | Keeps data and other models out of the repository, but allows `model.joblib` so the site has its model |
+
+To deploy your own copy: push this repository to GitHub, import it in Vercel (it detects FastAPI by itself), and press Deploy. No build command is needed.
+
 ## Privacy
 
-- Messages are checked on your own computer. Nothing is sent anywhere unless you tick **Look deeper at short links** (which contacts the short-link service) or enable Safe Browsing or domain-age lookups.
-- The browser extension sends only a site's address up to the `?` (never the part after it) to your own local server, and only when you press a button or switch on the warning option.
+- **The hosted website sends what you paste to the server.** It is analysed there and the result is returned. The app does not intentionally store messages, but the hosting provider (Vercel) keeps standard request logs. **Do not paste live OTPs, PINs, passwords or private details.** If a message contains them, hide them first.
+- **Running it on your own computer keeps everything on that computer.** Nothing is sent anywhere unless you tick **Look deeper at short links** (which contacts the short-link service) or enable Safe Browsing or domain-age lookups.
+- The browser extension sends only a site's address up to the `?` (never the part after it) to the server it is set to (your own computer by default), and only when you press a button or switch on the warning option.
 - Voice uses your browser's built-in speech, not an online service.
 
 ## Roadmap
@@ -112,7 +126,7 @@ Optional Google Safe Browsing: set the environment variable `SAFE_BROWSING_KEY` 
 1. Build a blind hold-out set of real messages (names, numbers and accounts replaced with fake ones), then score the text model once without tuning.
 2. Retrain the final model on all data and verify the brand domain list.
 3. Android app with consent-based SMS reading, which also gives the sender name, and an on-device model so messages never leave the phone.
-4. Hosted version with HTTPS, proper rate limiting and abuse protection.
+4. Harden the hosted version: shared rate limiting that works across Vercel's copies, abuse protection, and a privacy notice on the page itself.
 
 ## Credits and data licences
 
@@ -124,7 +138,7 @@ Optional Google Safe Browsing: set the environment variable `SAFE_BROWSING_KEY` 
 - Fonts: Bricolage Grotesque and Hind Siliguri, loaded from Google Fonts.
 - Cyber the robot was designed for this project.
 
-Datasets, trained models and real messages are deliberately excluded from this repository (see `.gitignore`) because several licences are unresolved and real messages are private.
+Datasets and real messages are deliberately excluded from this repository (see `.gitignore`) because several licences are unresolved and real messages are private. Only the final text model, `model.joblib`, is included so the site can run. It contains patterns learned from those datasets, so the unresolved licences above must be settled before the project is shared more widely.
 
 ## Licence
 
